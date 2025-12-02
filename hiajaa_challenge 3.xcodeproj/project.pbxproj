@@ -30,6 +30,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		0E5A49A82EDF280700049ACA /* LetterSelection */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = LetterSelection;
+			sourceTree = "<group>";
+		};
 		CDB6F36E2EDC7F6500F0068D /* hiajaa_challenge 3 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "hiajaa_challenge 3";
@@ -78,6 +83,7 @@
 				CDB6F36E2EDC7F6500F0068D /* hiajaa_challenge 3 */,
 				CDB6F37C2EDC7F6600F0068D /* hiajaa_challenge 3Tests */,
 				CDB6F3862EDC7F6600F0068D /* hiajaa_challenge 3UITests */,
+				0E5A49A82EDF280700049ACA /* LetterSelection */,
 				CDB6F36D2EDC7F6500F0068D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -108,6 +114,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				0E5A49A82EDF280700049ACA /* LetterSelection */,
 				CDB6F36E2EDC7F6500F0068D /* hiajaa_challenge 3 */,
 			);
 			name = "hiajaa_challenge 3";
