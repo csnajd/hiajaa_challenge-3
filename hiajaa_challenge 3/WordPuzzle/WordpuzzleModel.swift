@@ -10,21 +10,33 @@
 //
 
 import Foundation
+import SwiftUI
+
+struct Letter: Identifiable, Equatable {
+    let id = UUID()
+    let character: String
+    let correctPosition: Int
+    var currentPosition: Int?
+    var isPlaced: Bool = false
+    var color: Color
+    
+    static func == (lhs: Letter, rhs: Letter) -> Bool {
+        lhs.id == rhs.id
+    }
+}
 
 struct WordPuzzleModel: Identifiable {
     let id = UUID()
-    let imageName: String      // asset name
-    let word: String           // correct word
-
+    let imageName: String
+    let word: String
+    
     var letters: [String] {
         word.map { String($0) }
     }
 }
 
 // MARK: - Words Data
-
 let allWords: [WordPuzzleModel] = [
-
     // First group
     WordPuzzleModel(imageName: "books", word: "books"),
     WordPuzzleModel(imageName: "cloud", word: "cloud"),
@@ -41,7 +53,7 @@ let allWords: [WordPuzzleModel] = [
     WordPuzzleModel(imageName: "plane", word: "plane"),
     WordPuzzleModel(imageName: "Rocket", word: "rocket"),
     WordPuzzleModel(imageName: "Sun", word: "sun"),
-
+    
     // Second group
     WordPuzzleModel(imageName: "Apple", word: "apple"),
     WordPuzzleModel(imageName: "Bear", word: "bear"),
