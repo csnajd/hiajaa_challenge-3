@@ -125,7 +125,7 @@ struct ColoringView: View {
                     
                     HStack(spacing: 20) {
                         ForEach(viewModel.availableColors, id: \.self) { color in
-                            ColorButton(
+                            ColorPaletteButton(
                                 color: color,
                                 isSelected: viewModel.selectedColor == color,
                                 action: {
@@ -173,6 +173,31 @@ struct ColoringView: View {
                 viewModel.showSuccessView = false
             }
         }
+    }
+}
+
+// MARK: - Color Palette Button
+
+struct ColorPaletteButton: View {
+    let color: Color
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Circle()
+                .fill(color)
+                .frame(width: isSelected ? 55 : 45, height: isSelected ? 55 : 45)
+                .overlay(
+                    Circle()
+                        .stroke(Color.white, lineWidth: isSelected ? 4 : 0)
+                )
+                .shadow(color: isSelected ? color.opacity(0.5) : .black.opacity(0.2),
+                        radius: isSelected ? 8 : 4,
+                        x: 0,
+                        y: isSelected ? 4 : 2)
+        }
+        .animation(.spring(response: 0.3), value: isSelected)
     }
 }
 

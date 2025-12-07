@@ -73,6 +73,11 @@
 			path = LetterSelection;
 			sourceTree = "<group>";
 		};
+		0E5DE1E62EE5FE43000515DE /* WordPuzzle */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = WordPuzzle;
+			sourceTree = "<group>";
+		};
 		2F38433F2EE4EB3700CAA2A4 /* Coloring */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -133,6 +138,7 @@
 		CDB6F3632EDC7F6500F0068D = {
 			isa = PBXGroup;
 			children = (
+				0E5DE1E62EE5FE43000515DE /* WordPuzzle */,
 				0E5DE1E02EE5F60D000515DE /* Nvigation manger.swift */,
 				2F38433F2EE4EB3700CAA2A4 /* Coloring */,
 				CDB6F36E2EDC7F6500F0068D /* hiajaa_challenge 3 */,
@@ -171,6 +177,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				0E5A49A82EDF280700049ACA /* LetterSelection */,
+				0E5DE1E62EE5FE43000515DE /* WordPuzzle */,
 				CDB6F36E2EDC7F6500F0068D /* hiajaa_challenge 3 */,
 				CDB6F4152EE5A76B00F0068D /* heja */,
 			);
