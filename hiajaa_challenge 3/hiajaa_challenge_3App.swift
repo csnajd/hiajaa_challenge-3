@@ -11,7 +11,7 @@ import SwiftUI
 struct hiajaa_challenge_3App: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            WordpuzzleView()
         }
     }
 }
