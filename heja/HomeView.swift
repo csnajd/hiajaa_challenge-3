@@ -3,16 +3,7 @@ import SwiftUI
 struct HomeView: View {
 
     let avatar: Avatar
-    @Environment(\.dismiss) var dismiss
-
-    @State private var goToWord = false
-    @State private var selectedAvatar: String = ""   // ← هذا اللي نمرره لكل الصفحات
-
-    // كلمة واحدة مؤقتاً (lion)
-    let model = WordModel(
-        word:"Lion", imageName: "lion", title: "Lion",
-        letters: ["l", "i", "o", "n"]
-    )
+    @StateObject private var navigationManager = NavigationManager()
 
     var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -20,7 +11,7 @@ struct HomeView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationManager.path) {
 
             VStack(spacing: 0) {
 
@@ -65,15 +56,16 @@ struct HomeView: View {
                         imageName: "wordsIcon",
                         color: "CBFABA"
                     ) {
-                        selectedAvatar = avatar.image   // ← نحدد شخصية المستخدم
-                        goToWord = true
+                        navigationManager.navigateToLetterSelection(activityType: .words)
                     }
 
                     HomeButtonView(
                         title: "Coloring",
                         imageName: "coloringIcon",
                         color: "BAE9FA"
-                    ) { }
+                    ) {
+                        navigationManager.navigateToLetterSelection(activityType: .coloring)
+                    }
                 }
                 .padding(.top, 100)
 
@@ -84,10 +76,33 @@ struct HomeView: View {
             .ignoresSafeArea()
 
             //------------------
-            // NAVIGATION
+            // NAVIGATION DESTINATIONS
             //------------------
-            .navigationDestination(isPresented: $goToWord) {
-                WordView(model: model, selectedAvatar: selectedAvatar)
+            .navigationDestination(for: AppRoute.self) { route in
+                switch route {
+                case .letterSelection(let activityType):
+                    LetterSelectionView(activityType: activityType)
+                        .environmentObject(navigationManager)
+                case .wordView(let letter):
+                    WordView(selectedLetter: letter)
+                        .environmentObject(navigationManager)
+                case .coloringView(let letter):
+                    ColoringView(selectedLetter: letter)
+                        .environmentObject(navigationManager)
+                case .successView(let data):
+                    SuccessView(
+                        selectedAvatar: data.selectedAvatar,
+                        correctWord: data.correctWord,
+                        imageName: data.imageName,
+                        activityType: data.activityType,
+                        currentLetter: data.currentLetter,
+                        // 👇 ADDED THIS BLOCK to match SuccessView definition
+                        onNextLetter: {
+                            navigationManager.goToNextLetter(currentLetter: data.currentLetter, activityType: data.activityType)
+                        }
+                    )
+                    .environmentObject(navigationManager)
+                }
             }
         }
     }

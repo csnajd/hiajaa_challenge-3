@@ -20,10 +20,10 @@ let avatars: [Avatar] = [
 
 struct AvatarSelectionView: View {
     @State private var selectedAvatar: Avatar? = nil
-    @State private var goHome = false   // ← هذا الجديد
+    @State private var goHome = false
 
     var body: some View {
-        NavigationStack {   // ← ضروري للتنقل
+        NavigationStack {
             
             VStack(spacing: 0) {
 
@@ -67,7 +67,7 @@ struct AvatarSelectionView: View {
 
                 Button(action: {
                     if selectedAvatar != nil {
-                        goHome = true    // ← التحويل
+                        goHome = true
                     }
                 }) {
                     Text("Confirm")
@@ -85,14 +85,22 @@ struct AvatarSelectionView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(hex: "FEFEFE"))
 
-            // ——————————————————
             // Navigation to HomeView
-            // ——————————————————
             .navigationDestination(isPresented: $goHome) {
                 if let selectedAvatar = selectedAvatar {
                     HomeView(avatar: selectedAvatar)
+                        .navigationBarBackButtonHidden(true)
                 }
             }
         }
+    }
+}
+
+// MARK: - Preview
+
+struct AvatarSelectionView_Previews: PreviewProvider {
+    static var previews: some View {
+        AvatarSelectionView()
+            .previewDevice("iPad (10th generation)")
     }
 }

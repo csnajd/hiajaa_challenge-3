@@ -1,6 +1,7 @@
 import SwiftUI
 internal import Combine
 
+
 @MainActor
 class WordViewModel: ObservableObject {
     // MARK: - Published Properties
@@ -12,8 +13,9 @@ class WordViewModel: ObservableObject {
     @Published var isCompleted: Bool = false
     @Published var shakingLetterId: UUID?
     @Published var showSuccessAnimation: Bool = false
+    @Published var showSuccessView: Bool = false
     
-    // يهز الصفحة كاملة إذا صار خطأ
+    // Shakes the whole page on error
     @Published var shakePage: Bool = false
     
     // MARK: - Private Properties
@@ -25,6 +27,12 @@ class WordViewModel: ObservableObject {
         Color(red: 1.0, green: 0.8, blue: 0.6),      // Light orange
         Color(red: 0.9, green: 0.6, blue: 1.0)       // Light purple
     ]
+    
+    // All available letters for navigation
+    private let allLetters = ["A", "B", "C", "D", "E", "F", "G", "H",
+                              "I", "J", "K", "L", "M", "N", "O", "P",
+                              "Q", "R", "S", "T", "U", "V", "W", "X",
+                              "Y", "Z"]
     
     // MARK: - Initialization
     init() {}
@@ -68,6 +76,7 @@ class WordViewModel: ObservableObject {
     private func setupPuzzle() {
         isCompleted = false
         showSuccessAnimation = false
+        showSuccessView = false
         
         // Create letter objects with colors
         letters = currentWord.enumerated().map { index, char in
@@ -93,7 +102,7 @@ class WordViewModel: ObservableObject {
             return
         }
         
-        // If slot is already occupied → فقط نهز ونرجّع
+        // If slot is already occupied, shake and return
         if targetSlots[position] != nil {
             shakeAndReturn(letter)
             return
@@ -111,7 +120,7 @@ class WordViewModel: ObservableObject {
             
             checkCompletion()
         } else {
-            // Wrong placement - shake page and return letter (ما يثبت في الخانة)
+            // Wrong placement - shake page and return letter
             shakeAndReturn(letter)
         }
     }
@@ -133,20 +142,17 @@ class WordViewModel: ObservableObject {
     
     /// Shake animation for wrong placement
     private func shakeAndReturn(_ letter: Letter) {
-        // اهتزاز الحرف (لو ما تبينه، تقدرين تشيلينه)
+        // Shake the letter
         shakingLetterId = letter.id
         
-        // يهتز الكرت / الصفحة
+        // Shake the card/page
         shakePage = true
         
-        // نطفّي الاهتزاز بعد شوي
+        // Turn off shake after a short delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
             self.shakingLetterId = nil
             self.shakePage = false
         }
-        
-        // ملاحظة: ما حطيناه أصلاً في targetSlots،
-        // فبيظل موجود ضمن getAvailableLetters → يعني يرجع تحت تلقائي
     }
     
     /// Check if puzzle is completed
@@ -156,6 +162,11 @@ class WordViewModel: ObservableObject {
         if allPlaced {
             isCompleted = true
             showSuccessAnimation = true
+            
+            // Show success view after a short delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.showSuccessView = true
+            }
         }
     }
     
@@ -164,9 +175,25 @@ class WordViewModel: ObservableObject {
         setupPuzzle()
     }
     
-    /// Move to next word
+    /// Move to next word (same letter)
     func nextWord() {
         loadRandomWord(startingWith: selectedLetter)
+    }
+    
+    /// Move to next letter
+    func nextLetter() {
+        guard let currentIndex = allLetters.firstIndex(of: selectedLetter.uppercased()) else {
+            selectLetter("A")
+            return
+        }
+        
+        let nextIndex = (currentIndex + 1) % allLetters.count
+        selectLetter(allLetters[nextIndex])
+    }
+    
+    /// Get current letter index
+    func getCurrentLetterIndex() -> Int {
+        return allLetters.firstIndex(of: selectedLetter.uppercased()) ?? 0
     }
     
     // MARK: - Helper Methods

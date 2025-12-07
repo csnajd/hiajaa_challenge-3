@@ -4,13 +4,16 @@ import UniformTypeIdentifiers
 struct WordView: View {
     
     @StateObject private var viewModel: WordViewModel
+    @EnvironmentObject var navigationManager: NavigationManager
     
-    // لو تبين تمررين حرف معيّن من شاشة سابقة
-    init(selectedLetter: String = "أ") {
+    let selectedLetter: String
+    
+    init(selectedLetter: String = "A") {
+        self.selectedLetter = selectedLetter
         _viewModel = StateObject(wrappedValue: WordViewModel(selectedLetter: selectedLetter))
     }
     
-    // ألوان حدود الخانات (زي التصميم حقك)
+    // Slot border colors
     private let slotBorderColors: [Color] = [
         Color(red: 1.0, green: 0.50, blue: 0.50),   // red
         Color(red: 0.50, green: 0.90, blue: 0.60),  // green
@@ -22,10 +25,10 @@ struct WordView: View {
             Color.white.ignoresSafeArea()
             
             VStack {
-                // زر رجوع يسار فوق
+                // Back button top left
                 HStack {
                     Button {
-                        // رجوع لو عندك NavigationStack
+                        navigationManager.goBack()
                     } label: {
                         Image(systemName: "chevron.backward")
                             .font(.title3.bold())
@@ -44,7 +47,7 @@ struct WordView: View {
                 
                 Spacer()
                 
-                // الكرت الأساسي البيج (يغطي نص الشاشة)
+                // Main beige card
                 ZStack {
                     RoundedRectangle(cornerRadius: 40)
                         .fill(Color(red: 1.0, green: 0.93, blue: 0.80))
@@ -52,11 +55,11 @@ struct WordView: View {
                     
                     VStack(spacing: 24) {
                         
-                        // زر الصوت / المايك فوق
+                        // Sound button at top
                         HStack {
                             Spacer()
                             Button {
-                                // شغّلي الصوت هنا
+                                // Play sound here
                             } label: {
                                 Image(systemName: "speaker.wave.2.fill")
                                     .font(.title2.bold())
@@ -72,7 +75,7 @@ struct WordView: View {
                         }
                         .padding(.top, 24)
                         
-                        // صورة الحيوان من currentPuzzle
+                        // Image from currentPuzzle
                         if let puzzle = viewModel.currentPuzzle {
                             Image(puzzle.imageName)
                                 .resizable()
@@ -80,7 +83,7 @@ struct WordView: View {
                                 .frame(height: 220)
                         }
                         
-                        // خانات الحروف (targetSlots)
+                        // Letter slots (targetSlots)
                         HStack(spacing: 18) {
                             ForEach(0..<viewModel.currentWord.count, id: \.self) { index in
                                 let letter = viewModel.getLetterAt(position: index)
@@ -90,7 +93,6 @@ struct WordView: View {
                                     .onTapGesture {
                                         viewModel.removeLetter(at: index)
                                     }
-                                    // 👇 نوع الداتا اللي نستقبلها من السحب
                                     .onDrop(of: [UTType.plainText], isTargeted: nil) { providers in
                                         handleDrop(providers: providers, at: index)
                                     }
@@ -102,17 +104,16 @@ struct WordView: View {
                     .padding(.bottom, 24)
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: UIScreen.main.bounds.height * 0.5)  // ← يغطي نص الشاشة
+                .frame(height: UIScreen.main.bounds.height * 0.5)
                 .padding(.horizontal, 20)
                 
                 Spacer()
                 
-                // الحروف تحت الكرت (من getAvailableLetters)
+                // Letters below the card (from getAvailableLetters)
                 HStack(spacing: 40) {
                     ForEach(viewModel.getAvailableLetters()) { letter in
                         LetterTileView(letter: letter,
                                        isShaking: viewModel.isLetterShaking(letter))
-                            // 👇 هنا نرسل الـ id كنص عشان نلقاه في الـ drop
                             .onDrag {
                                 let provider = NSItemProvider(object: letter.id.uuidString as NSString)
                                 return provider
@@ -122,12 +123,26 @@ struct WordView: View {
                 .padding(.bottom, 60)
             }
         }
-        // اهتزاز الصفحة إذا حصل خطأ
+        .navigationBarHidden(true)
+        // Page shake effect on error
         .modifier(PageShakeEffect(shakes: viewModel.shakePage ? 1 : 0))
         .animation(.easeInOut(duration: 0.25), value: viewModel.shakePage)
         .onAppear {
             if viewModel.currentPuzzle == nil {
-                viewModel.selectLetter(viewModel.selectedLetter.isEmpty ? "أ" : viewModel.selectedLetter)
+                viewModel.selectLetter(viewModel.selectedLetter.isEmpty ? "A" : viewModel.selectedLetter)
+            }
+        }
+        .onChange(of: viewModel.showSuccessView) { _, newValue in
+            if newValue {
+                let data = SuccessData(
+                    selectedAvatar: "avatar1",
+                    correctWord: viewModel.currentWord.uppercased(),
+                    imageName: viewModel.currentPuzzle?.imageName ?? "",
+                    activityType: .words,
+                    currentLetter: selectedLetter
+                )
+                navigationManager.navigateToSuccess(data: data)
+                viewModel.showSuccessView = false
             }
         }
     }
@@ -137,7 +152,6 @@ struct WordView: View {
     private func handleDrop(providers: [NSItemProvider], at position: Int) -> Bool {
         guard let provider = providers.first else { return false }
         
-        // 👇 نستقبل نفس النوع اللي أرسلناه (NSString / plainText)
         provider.loadObject(ofClass: NSString.self) { object, _ in
             guard let idString = object as? String,
                   let uuid = UUID(uuidString: idString) else { return }
@@ -152,7 +166,7 @@ struct WordView: View {
     }
 }
 
-// MARK: - خانة من الخانات (المربعات فوق)
+// MARK: - Target Slot View
 
 struct TargetSlotView: View {
     let letter: Letter?
@@ -177,7 +191,7 @@ struct TargetSlotView: View {
     }
 }
 
-// MARK: - المربعات اللي تحت (الحروف)
+// MARK: - Letter Tile View
 
 struct LetterTileView: View {
     let letter: Letter
@@ -198,7 +212,7 @@ struct LetterTileView: View {
     }
 }
 
-// MARK: - تأثير الاهتزاز للحرف
+// MARK: - Shake Effect for Letter
 
 struct ShakeEffect: GeometryEffect {
     var shakes: Int
@@ -215,7 +229,7 @@ struct ShakeEffect: GeometryEffect {
     }
 }
 
-// MARK: - تأثير اهتزاز الصفحة / الكرت كامل
+// MARK: - Page Shake Effect
 
 struct PageShakeEffect: GeometryEffect {
     var shakes: CGFloat = 0
@@ -234,9 +248,9 @@ struct PageShakeEffect: GeometryEffect {
 
 // MARK: - Preview
 
-struct WordpuzzleView_Previews: PreviewProvider {
+struct WordView_Previews: PreviewProvider {
     static var previews: some View {
-        WordView(selectedLetter: "أ")
+        WordView(selectedLetter: "A")
             .previewDevice("iPad (10th generation)")
     }
 }

@@ -23,7 +23,7 @@ struct SpellingView: View {
 
         VStack(spacing: 30) {
 
-            // كارد فيقما
+            // Card
             ZStack {
                 RoundedRectangle(cornerRadius: 45)
                     .fill(Color(hex: "FFE5C4"))
@@ -56,9 +56,8 @@ struct SpellingView: View {
                 }
             }
 
-            // مربعات الحروف
+            // Letter boxes
             HStack(spacing: 25) {
-
                 ForEach(0..<placed.count, id: \.self) { index in
                     ZStack {
                         RoundedRectangle(cornerRadius: 16)
@@ -80,7 +79,7 @@ struct SpellingView: View {
                 }
             }
 
-            // الحروف تحت
+            // Letters below
             HStack(spacing: 25) {
                 ForEach(letters, id: \.self) { letter in
                     if !placed.contains(letter) {
@@ -96,12 +95,19 @@ struct SpellingView: View {
                 }
             }
 
-            // الانتقال
+            // Navigation
             .navigationDestination(isPresented: $goToSuccess) {
                 SuccessView(
                     selectedAvatar: selectedAvatar,
                     correctWord: model.word,
-                    imageName: model.imageName
+                    imageName: model.imageName,
+                    activityType: .words,
+                    currentLetter: "", // FIXED: Removed placeholder
+                    onNextLetter: {
+                        // Reset and continue
+                        goToSuccess = false
+                        setupBoard()
+                    }
                 )
             }
         }
@@ -140,4 +146,3 @@ struct SpellingView: View {
         }
     }
 }
-

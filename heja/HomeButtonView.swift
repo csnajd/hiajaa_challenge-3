@@ -1,11 +1,11 @@
-import SwiftUI   // ← لازم يكون موجود
+import SwiftUI
 
 struct HomeButtonView: View {
 
     let title: String
     let imageName: String
     let color: String
-    let action: () -> Void   // ← هذا اللي ينفذ عند الضغط
+    let action: () -> Void
 
     var body: some View {
         VStack(spacing: 14) {
@@ -25,9 +25,8 @@ struct HomeButtonView: View {
             }
 
             Text(title)
-                .font(.custom("NotoSansArabic-Regular", size: 26))
+                .font(.system(size: 26, weight: .medium))
                 .foregroundColor(Color(hex: "7B4D2C"))
         }
     }
 }
-

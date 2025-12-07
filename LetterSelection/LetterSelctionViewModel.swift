@@ -9,28 +9,21 @@ import Foundation
 import SwiftUI
 internal import Combine
 
-
-
-
+@MainActor
 class LetterSelectionViewModel: ObservableObject {
     @Published var currentLetterIndex: Int = 0
     @Published var showListView: Bool = false
     @Published var selectedLetterInList: String? = nil
     @Published var navigateToNextScreen: Bool = false
-    @Published var currentLanguage: AppLanguage = .english {
-        didSet {
-            // Reset state when language changes
-            model = LetterSelectionModel(language: currentLanguage)
-            currentLetterIndex = 0
-            selectedLetterInList = nil
-        }
-    }
     
     @Published var model: LetterSelectionModel
     
-    init(language: AppLanguage = .english) {
-        self.currentLanguage = language
-        self.model = LetterSelectionModel(language: language)
+    // Track which activity was selected (coloring or words)
+    var activityType: ActivityType
+    
+    init(activityType: ActivityType = .words) {
+        self.activityType = activityType
+        self.model = LetterSelectionModel()
     }
     
     var currentLetter: String {
@@ -70,12 +63,8 @@ class LetterSelectionViewModel: ObservableObject {
     
     func confirmSelection() {
         guard isConfirmButtonEnabled else { return }
-        print("Selected letter: \(selectedLetter)")
+        print("Selected letter: \(selectedLetter) for activity: \(activityType.rawValue)")
         navigateToNextScreen = true
-    }
-    
-    func toggleLanguage() {
-        currentLanguage = currentLanguage == .english ? .arabic : .english
     }
     
     func getColorName(for index: Int) -> String {

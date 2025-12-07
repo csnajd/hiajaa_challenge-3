@@ -7,33 +7,16 @@
 
 import Foundation
 import SwiftUI
-import Foundation
-
-enum AppLanguage: String {
-    case english = "en"
-    case arabic = "ar"
-}
 
 struct LetterSelectionModel {
-    let language: AppLanguage
     
     var letters: [String] {
-        switch language {
-        case .english:
-            return [
-                "A", "B", "C", "D", "E", "F", "G", "H",
-                "I", "J", "K", "L", "M", "N", "O", "P",
-                "Q", "R", "S", "T", "U", "V", "W", "X",
-                "Y", "Z"
-            ]
-        case .arabic:
-            return [
-                "ا", "ب", "ت", "ث", "ج", "ح", "خ", "د",
-                "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط",
-                "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م",
-                "ن", "ه", "و", "ي"
-            ]
-        }
+        return [
+            "A", "B", "C", "D", "E", "F", "G", "H",
+            "I", "J", "K", "L", "M", "N", "O", "P",
+            "Q", "R", "S", "T", "U", "V", "W", "X",
+            "Y", "Z"
+        ]
     }
     
     let pastelColors: [String] = [
@@ -43,35 +26,18 @@ struct LetterSelectionModel {
     ]
     
     var swipeInstruction: String {
-        switch language {
-        case .english:
-            return "Swipe left or right to change letter"
-        case .arabic:
-            return "اسحب يميناً أو يساراً لتغيير الحرف"
-        }
+        return "Swipe left or right to change letter"
     }
     
     var listInstruction: String {
-        switch language {
-        case .english:
-            return "Choose a letter from the list"
-        case .arabic:
-            return "اختر حرفاً من القائمة"
-        }
+        return "Choose a letter from the list"
     }
     
     var confirmButtonText: String {
-        switch language {
-        case .english:
-            return "Confirm"
-        case .arabic:
-            return "تأكيد"
-        }
+        return "Confirm"
     }
     
-    init(language: AppLanguage) {
-        self.language = language
-    }
+    init() {}
     
     func getColor(for index: Int) -> String {
         return pastelColors[index % pastelColors.count]

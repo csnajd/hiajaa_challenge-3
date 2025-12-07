@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+
 struct LetterSelectionConfirmButton: View {
     let isEnabled: Bool
     let text: String

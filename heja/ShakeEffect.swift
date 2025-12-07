@@ -16,4 +16,3 @@ struct HorizontalShakeEffect: GeometryEffect {
         return ProjectionTransform(CGAffineTransform(translationX: translation, y: 0))
     }
 }
-

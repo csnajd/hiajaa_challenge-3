@@ -7,10 +7,16 @@
 
 import SwiftUI
 
-
 struct LetterSelectionView: View {
-    @StateObject private var viewModel = LetterSelectionViewModel()
-    @Environment(\.dismiss) var dismiss
+    @StateObject private var viewModel: LetterSelectionViewModel
+    @EnvironmentObject var navigationManager: NavigationManager
+    
+    let activityType: ActivityType
+    
+    init(activityType: ActivityType) {
+        self.activityType = activityType
+        _viewModel = StateObject(wrappedValue: LetterSelectionViewModel(activityType: activityType))
+    }
     
     var body: some View {
         ZStack {
@@ -29,10 +35,8 @@ struct LetterSelectionView: View {
             VStack(spacing: 0) {
                 // Header
                 LetterSelectionHeaderView(
-                    onClose: { dismiss() },
-                    onToggleList: { viewModel.toggleListView() },
-                    onToggleLanguage: { viewModel.toggleLanguage() },
-                    currentLanguage: viewModel.currentLanguage
+                    onClose: { navigationManager.goBack() },
+                    onToggleList: { viewModel.toggleListView() }
                 )
                 .padding(.horizontal)
                 .padding(.top, 20)
@@ -52,7 +56,13 @@ struct LetterSelectionView: View {
                 LetterSelectionConfirmButton(
                     isEnabled: viewModel.isConfirmButtonEnabled,
                     text: viewModel.model.confirmButtonText,
-                    action: { viewModel.confirmSelection() }
+                    action: {
+                        if viewModel.activityType == .words {
+                            navigationManager.navigateToWordView(letter: viewModel.selectedLetter)
+                        } else {
+                            navigationManager.navigateToColoringView(letter: viewModel.selectedLetter)
+                        }
+                    }
                 )
                 .padding(.horizontal, 40)
                 
@@ -65,11 +75,5 @@ struct LetterSelectionView: View {
             }
         }
         .navigationBarHidden(true)
-        .navigationDestination(isPresented: $viewModel.navigateToNextScreen) {
-            // Navigate to ColoringView or WordAssemblyView
-            // ColoringView(letter: viewModel.selectedLetter)
-            Text("Next Screen: \(viewModel.selectedLetter)")
-        }
     }
 }
-
