@@ -5,7 +5,6 @@
 //  Created by Latifa Farhan Al-Mawash on 16/06/1447 AH.
 //
 
-import Foundation
 import SwiftUI
 internal import Combine
 
@@ -14,15 +13,17 @@ internal import Combine
 class ColoringViewModel: ObservableObject {
     // MARK: - Published Properties
     @Published var selectedLetter: String = ""
-    @Published var selectedColor: Color = .red
-    @Published var coloredPaths: [ColoredPath] = []
+    @Published var selectedColor: Color = .green
+    @Published var isErasing: Bool = false
+    @Published var drawingPaths: [DrawingPath] = []
+    @Published var currentPath: [CGPoint] = []
     @Published var isCompleted: Bool = false
     @Published var showSuccessView: Bool = false
     
-    // Available colors for coloring
-    let availableColors: [Color] = [
-        .red, .orange, .yellow, .green, .blue, .purple, .pink, .brown
-    ]
+    // Use the static availableColors from ColorPalette
+    var availableColors: [ColorPalette] {
+        ColorPalette.availableColors
+    }
     
     // All available letters for navigation
     private let allLetters = ["A", "B", "C", "D", "E", "F", "G", "H",
@@ -41,15 +42,48 @@ class ColoringViewModel: ObservableObject {
     
     func selectColor(_ color: Color) {
         selectedColor = color
+        isErasing = false
     }
     
-    func addPath(_ path: Path) {
-        let coloredPath = ColoredPath(path: path, color: selectedColor)
-        coloredPaths.append(coloredPath)
+    func selectEraser() {
+        isErasing = true
+    }
+    
+    func isColorSelected(_ color: Color) -> Bool {
+        return !isErasing && selectedColor == color
+    }
+    
+    func addPoint(_ point: CGPoint) {
+        currentPath.append(point)
+    }
+    
+    func finishDrawing() {
+        if !currentPath.isEmpty {
+            let newPath = DrawingPath(
+                points: currentPath,
+                color: isErasing ? .white : selectedColor,
+                isEraser: isErasing
+            )
+            drawingPaths.append(newPath)
+            currentPath = []
+        }
+    }
+    
+    func getCurrentColor() -> Color {
+        return isErasing ? .white : selectedColor
+    }
+    
+    func getCurrentLineWidth() -> CGFloat {
+        return isErasing ? DrawingConstants.eraserLineWidth : DrawingConstants.normalLineWidth
+    }
+    
+    func getLineWidth(for path: DrawingPath) -> CGFloat {
+        return path.isEraser ? DrawingConstants.eraserLineWidth : DrawingConstants.normalLineWidth
     }
     
     func clearColoring() {
-        coloredPaths.removeAll()
+        drawingPaths.removeAll()
+        currentPath = []
         isCompleted = false
         showSuccessView = false
     }
@@ -78,12 +112,4 @@ class ColoringViewModel: ObservableObject {
     func getCurrentLetterIndex() -> Int {
         return allLetters.firstIndex(of: selectedLetter.uppercased()) ?? 0
     }
-}
-
-// MARK: - Colored Path Model
-
-struct ColoredPath: Identifiable {
-    let id = UUID()
-    let path: Path
-    let color: Color
 }

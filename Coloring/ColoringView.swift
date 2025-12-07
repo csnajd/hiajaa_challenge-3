@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct ColoringView: View {
-    @StateObject private var viewModel: ColoringViewModel
+    // MARK: - Properties
     @EnvironmentObject var navigationManager: NavigationManager
-    
-    @State private var currentPath = Path()
+    @StateObject private var viewModel: ColoringViewModel
     
     let selectedLetter: String
     
@@ -20,143 +19,20 @@ struct ColoringView: View {
         _viewModel = StateObject(wrappedValue: ColoringViewModel(selectedLetter: selectedLetter))
     }
     
+    // MARK: - Body
     var body: some View {
         ZStack {
-            // Background
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color.blue.opacity(0.1),
-                    Color.purple.opacity(0.1),
-                    Color.pink.opacity(0.1)
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            Color.white
+                .ignoresSafeArea()
             
-            VStack(spacing: 20) {
-                // Header with back button and done button
-                HStack {
-                    Button {
-                        navigationManager.goBack()
-                    } label: {
-                        Image(systemName: "chevron.backward")
-                            .font(.title3.bold())
-                            .foregroundColor(.black)
-                            .padding(10)
-                            .background(
-                                Circle()
-                                    .fill(Color(red: 1.0, green: 0.80, blue: 0.70))
-                                    .shadow(radius: 4)
-                            )
-                    }
-                    
-                    Spacer()
-                    
-                    // Done button
-                    Button {
-                        viewModel.markAsComplete()
-                    } label: {
-                        Text("Done")
-                            .font(.headline.bold())
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 10)
-                            .background(
-                                Capsule()
-                                    .fill(Color.green)
-                                    .shadow(radius: 4)
-                            )
-                    }
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-                
-                // Title
-                Text("Color the Letter")
-                    .font(.system(size: 28, weight: .bold))
-                    .foregroundColor(Color(hex: "7B4D2C"))
-                
-                // Coloring Canvas
-                ZStack {
-                    // Background card
-                    RoundedRectangle(cornerRadius: 40)
-                        .fill(Color.white)
-                        .shadow(color: .black.opacity(0.15), radius: 15, x: 0, y: 8)
-                    
-                    // Letter outline
-                    Text(viewModel.selectedLetter)
-                        .font(.system(size: 350, weight: .bold))
-                        .foregroundColor(Color.gray.opacity(0.2))
-                    
-                    // Colored paths
-                    ForEach(viewModel.coloredPaths) { coloredPath in
-                        coloredPath.path
-                            .stroke(coloredPath.color, style: StrokeStyle(lineWidth: 25, lineCap: .round, lineJoin: .round))
-                    }
-                    
-                    // Current drawing path
-                    currentPath
-                        .stroke(viewModel.selectedColor, style: StrokeStyle(lineWidth: 25, lineCap: .round, lineJoin: .round))
-                }
-                .frame(width: 450, height: 450)
-                .clipShape(RoundedRectangle(cornerRadius: 40))
-                .gesture(
-                    DragGesture(minimumDistance: 0)
-                        .onChanged { value in
-                            let point = value.location
-                            if currentPath.isEmpty {
-                                currentPath.move(to: point)
-                            } else {
-                                currentPath.addLine(to: point)
-                            }
-                        }
-                        .onEnded { _ in
-                            viewModel.addPath(currentPath)
-                            currentPath = Path()
-                        }
-                )
-                
-                // Color palette
-                VStack(spacing: 15) {
-                    Text("Choose a Color")
-                        .font(.headline)
-                        .foregroundColor(.gray)
-                    
-                    HStack(spacing: 20) {
-                        ForEach(viewModel.availableColors, id: \.self) { color in
-                            ColorPaletteButton(
-                                color: color,
-                                isSelected: viewModel.selectedColor == color,
-                                action: {
-                                    viewModel.selectColor(color)
-                                }
-                            )
-                        }
-                    }
-                }
-                .padding(.vertical, 20)
-                
-                // Clear button
-                Button {
-                    viewModel.clearColoring()
-                } label: {
-                    HStack {
-                        Image(systemName: "trash")
-                        Text("Clear")
-                    }
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 30)
-                    .padding(.vertical, 12)
-                    .background(
-                        Capsule()
-                            .fill(Color.red.opacity(0.8))
-                            .shadow(radius: 4)
-                    )
-                }
+            VStack {
+                backButton
                 
                 Spacer()
+                
+                drawingCanvas
+                
+                colorPaletteSection
             }
         }
         .navigationBarHidden(true)
@@ -174,30 +50,142 @@ struct ColoringView: View {
             }
         }
     }
-}
-
-// MARK: - Color Palette Button
-
-struct ColorPaletteButton: View {
-    let color: Color
-    let isSelected: Bool
-    let action: () -> Void
     
-    var body: some View {
-        Button(action: action) {
-            Circle()
-                .fill(color)
-                .frame(width: isSelected ? 55 : 45, height: isSelected ? 55 : 45)
-                .overlay(
+    // MARK: - View Components
+    
+    private var backButton: some View {
+        HStack {
+            Button(action: {
+                navigationManager.goBack()
+            }) {
+                ZStack {
                     Circle()
-                        .stroke(Color.white, lineWidth: isSelected ? 4 : 0)
-                )
-                .shadow(color: isSelected ? color.opacity(0.5) : .black.opacity(0.2),
-                        radius: isSelected ? 8 : 4,
-                        x: 0,
-                        y: isSelected ? 4 : 2)
+                        .fill(Color("BackButtonColor"))
+                        .frame(width: DrawingConstants.buttonSize, height: DrawingConstants.buttonSize)
+                    
+                    Image(systemName: "xmark")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(.black)
+                }
+            }
+            .padding(.leading, 30)
+            .padding(.top, 20)
+            
+            Spacer()
         }
-        .animation(.spring(response: 0.3), value: isSelected)
+    }
+    
+    private var drawingCanvas: some View {
+        ZStack {
+            Color.white
+            
+            // Letter outline
+            Text(viewModel.selectedLetter)
+                .font(.system(size: 350, weight: .bold))
+                .foregroundColor(Color.gray.opacity(0.2))
+            
+            Canvas { context, size in
+                // Draw all paths
+                for drawingPath in viewModel.drawingPaths {
+                    var path = Path()
+                    if let firstPoint = drawingPath.points.first {
+                        path.move(to: firstPoint)
+                        for point in drawingPath.points.dropFirst() {
+                            path.addLine(to: point)
+                        }
+                    }
+                    context.stroke(
+                        path,
+                        with: .color(drawingPath.color),
+                        style: StrokeStyle(
+                            lineWidth: viewModel.getLineWidth(for: drawingPath),
+                            lineCap: .round,
+                            lineJoin: .round
+                        )
+                    )
+                }
+                
+                // Draw current path
+                if !viewModel.currentPath.isEmpty {
+                    var path = Path()
+                    path.move(to: viewModel.currentPath[0])
+                    for point in viewModel.currentPath.dropFirst() {
+                        path.addLine(to: point)
+                    }
+                    context.stroke(
+                        path,
+                        with: .color(viewModel.getCurrentColor()),
+                        style: StrokeStyle(
+                            lineWidth: viewModel.getCurrentLineWidth(),
+                            lineCap: .round,
+                            lineJoin: .round
+                        )
+                    )
+                }
+            }
+        }
+        .gesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { value in
+                    viewModel.addPoint(value.location)
+                }
+                .onEnded { _ in
+                    viewModel.finishDrawing()
+                }
+        )
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    private var colorPaletteSection: some View {
+        HStack(spacing: 30) {
+            colorPalette
+            eraserButton
+        }
+        .padding(.bottom, 50)
+    }
+    
+    private var colorPalette: some View {
+        ZStack {
+            Capsule()
+                .fill(Color("PaletteColor"))
+                .frame(width: DrawingConstants.paletteWidth, height: DrawingConstants.paletteHeight)
+                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+            
+            HStack(spacing: 35) {
+                ForEach(viewModel.availableColors, id: \.assetName) { colorPalette in
+                    ColorButton(
+                        color: Color(colorPalette.assetName),
+                        isSelected: viewModel.isColorSelected(Color(colorPalette.assetName))
+                    ) {
+                        viewModel.selectColor(Color(colorPalette.assetName))
+                    }
+                }
+            }
+        }
+    }
+    
+    private var eraserButton: some View {
+        Button(action: {
+            viewModel.selectEraser()
+        }) {
+            ZStack {
+                Circle()
+                    .fill(Color.white)
+                    .frame(width: DrawingConstants.eraserCircleSize, height: DrawingConstants.eraserCircleSize)
+                    .overlay(
+                        Circle()
+                            .stroke(
+                                viewModel.isErasing ? Color.blue : Color.gray.opacity(0.3),
+                                lineWidth: viewModel.isErasing ? 4 : 2
+                            )
+                    )
+                    .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+                
+                Image(systemName: "eraser.fill")
+                    .font(.system(size: 26))
+                    .foregroundColor(.gray)
+            }
+        }
     }
 }
 
