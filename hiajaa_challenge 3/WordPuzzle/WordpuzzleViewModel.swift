@@ -1,5 +1,3 @@
-
-
 import SwiftUI
 internal import Combine
 
@@ -14,6 +12,9 @@ class WordPuzzleViewModel: ObservableObject {
     @Published var isCompleted: Bool = false
     @Published var shakingLetterId: UUID?
     @Published var showSuccessAnimation: Bool = false
+    
+    // يهز الصفحة كاملة إذا صار خطأ
+    @Published var shakePage: Bool = false
     
     // MARK: - Private Properties
     private let letterColors: [Color] = [
@@ -92,9 +93,8 @@ class WordPuzzleViewModel: ObservableObject {
             return
         }
         
-        // Check if slot is already occupied
+        // If slot is already occupied → فقط نهز ونرجّع
         if targetSlots[position] != nil {
-            // Shake the letter and return it
             shakeAndReturn(letter)
             return
         }
@@ -111,7 +111,7 @@ class WordPuzzleViewModel: ObservableObject {
             
             checkCompletion()
         } else {
-            // Wrong placement - shake and return
+            // Wrong placement - shake page and return letter (ما يثبت في الخانة)
             shakeAndReturn(letter)
         }
     }
@@ -133,12 +133,20 @@ class WordPuzzleViewModel: ObservableObject {
     
     /// Shake animation for wrong placement
     private func shakeAndReturn(_ letter: Letter) {
+        // اهتزاز الحرف (لو ما تبينه، تقدرين تشيلينه)
         shakingLetterId = letter.id
         
-        // Reset shaking after animation
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        // يهتز الكرت / الصفحة
+        shakePage = true
+        
+        // نطفّي الاهتزاز بعد شوي
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
             self.shakingLetterId = nil
+            self.shakePage = false
         }
+        
+        // ملاحظة: ما حطيناه أصلاً في targetSlots،
+        // فبيظل موجود ضمن getAvailableLetters → يعني يرجع تحت تلقائي
     }
     
     /// Check if puzzle is completed
@@ -168,11 +176,9 @@ class WordPuzzleViewModel: ObservableObject {
         return letters.filter { !$0.isPlaced }
     }
     
-    
     func getLetterAt(position: Int) -> Letter? {
         return targetSlots[position]
     }
-    
     
     func isLetterShaking(_ letter: Letter) -> Bool {
         return shakingLetterId == letter.id
