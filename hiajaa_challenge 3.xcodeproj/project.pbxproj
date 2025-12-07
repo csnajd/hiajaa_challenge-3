@@ -29,10 +29,53 @@
 		CDB6F3832EDC7F6600F0068D /* hiajaa_challenge 3UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "hiajaa_challenge 3UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2F3843432EE4ECCE00CAA2A4 /* Exceptions for "Coloring" folder in "hiajaa_challenge 3" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Coloring.xcassets,
+				ColoringView.swift,
+				ColoringViewModel.swift,
+				DrawingModel.swift,
+			);
+			target = CDB6F36B2EDC7F6500F0068D /* hiajaa_challenge 3 */;
+		};
+		2F3843442EE4ECCE00CAA2A4 /* Exceptions for "Coloring" folder in "hiajaa_challenge 3Tests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Coloring.xcassets,
+				ColoringView.swift,
+				ColoringViewModel.swift,
+				DrawingModel.swift,
+			);
+			target = CDB6F3782EDC7F6600F0068D /* hiajaa_challenge 3Tests */;
+		};
+		2F3843452EE4ECCE00CAA2A4 /* Exceptions for "Coloring" folder in "hiajaa_challenge 3UITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Coloring.xcassets,
+				ColoringView.swift,
+				ColoringViewModel.swift,
+				DrawingModel.swift,
+			);
+			target = CDB6F3822EDC7F6600F0068D /* hiajaa_challenge 3UITests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		0E5A49A82EDF280700049ACA /* LetterSelection */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = LetterSelection;
+			sourceTree = "<group>";
+		};
+		2F38433F2EE4EB3700CAA2A4 /* Coloring */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2F3843432EE4ECCE00CAA2A4 /* Exceptions for "Coloring" folder in "hiajaa_challenge 3" target */,
+				2F3843442EE4ECCE00CAA2A4 /* Exceptions for "Coloring" folder in "hiajaa_challenge 3Tests" target */,
+				2F3843452EE4ECCE00CAA2A4 /* Exceptions for "Coloring" folder in "hiajaa_challenge 3UITests" target */,
+			);
+			path = Coloring;
 			sourceTree = "<group>";
 		};
 		CDB6F36E2EDC7F6500F0068D /* hiajaa_challenge 3 */ = {
@@ -85,6 +128,7 @@
 		CDB6F3632EDC7F6500F0068D = {
 			isa = PBXGroup;
 			children = (
+				2F38433F2EE4EB3700CAA2A4 /* Coloring */,
 				CDB6F36E2EDC7F6500F0068D /* hiajaa_challenge 3 */,
 				CDB6F37C2EDC7F6600F0068D /* hiajaa_challenge 3Tests */,
 				CDB6F3862EDC7F6600F0068D /* hiajaa_challenge 3UITests */,
