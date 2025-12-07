@@ -87,7 +87,7 @@ struct HomeView: View {
             // NAVIGATION
             //------------------
             .navigationDestination(isPresented: $goToWord) {
-                WordView(model: model, selectedAvatar: $selectedAvatar)
+                WordView(model: model, selectedAvatar: selectedAvatar)
             }
         }
     }

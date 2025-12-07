@@ -1,13 +1,13 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-struct WordpuzzleView: View {
+struct WordView: View {
     
-    @StateObject private var viewModel: WordPuzzleViewModel
+    @StateObject private var viewModel: WordViewModel
     
     // لو تبين تمررين حرف معيّن من شاشة سابقة
     init(selectedLetter: String = "أ") {
-        _viewModel = StateObject(wrappedValue: WordPuzzleViewModel(selectedLetter: selectedLetter))
+        _viewModel = StateObject(wrappedValue: WordViewModel(selectedLetter: selectedLetter))
     }
     
     // ألوان حدود الخانات (زي التصميم حقك)
@@ -236,7 +236,7 @@ struct PageShakeEffect: GeometryEffect {
 
 struct WordpuzzleView_Previews: PreviewProvider {
     static var previews: some View {
-        WordpuzzleView(selectedLetter: "أ")
+        WordView(selectedLetter: "أ")
             .previewDevice("iPad (10th generation)")
     }
 }

@@ -25,7 +25,7 @@ struct Letter: Identifiable, Equatable {
     }
 }
 
-struct WordPuzzleModel: Identifiable {
+struct WordModel: Identifiable {
     let id = UUID()
     let imageName: String
     let word: String
@@ -36,34 +36,34 @@ struct WordPuzzleModel: Identifiable {
 }
 
 // MARK: - Words Data
-let allWords: [WordPuzzleModel] = [
+let allWords: [WordModel ] = [
     // First group
-    WordPuzzleModel(imageName: "books", word: "books"),
-    WordPuzzleModel(imageName: "cloud", word: "cloud"),
-    WordPuzzleModel(imageName: "elphant", word: "elephant"),
-    WordPuzzleModel(imageName: "envlope", word: "envelope"),
-    WordPuzzleModel(imageName: "fish", word: "fish"),
-    WordPuzzleModel(imageName: "flower", word: "flower"),
-    WordPuzzleModel(imageName: "frog", word: "frog"),
-    WordPuzzleModel(imageName: "gift", word: "gift"),
-    WordPuzzleModel(imageName: "honey", word: "honey"),
-    WordPuzzleModel(imageName: "key", word: "key"),
-    WordPuzzleModel(imageName: "lemon", word: "lemon"),
-    WordPuzzleModel(imageName: "moon", word: "moon"),
-    WordPuzzleModel(imageName: "plane", word: "plane"),
-    WordPuzzleModel(imageName: "Rocket", word: "rocket"),
-    WordPuzzleModel(imageName: "Sun", word: "sun"),
+    WordModel (imageName: "books", word: "books"),
+    WordModel (imageName: "cloud", word: "cloud"),
+    WordModel (imageName: "elphant", word: "elephant"),
+    WordModel (imageName: "envlope", word: "envelope"),
+    WordModel (imageName: "fish", word: "fish"),
+    WordModel (imageName: "flower", word: "flower"),
+    WordModel (imageName: "frog", word: "frog"),
+    WordModel (imageName: "gift", word: "gift"),
+    WordModel (imageName: "honey", word: "honey"),
+    WordModel (imageName: "key", word: "key"),
+    WordModel (imageName: "lemon", word: "lemon"),
+    WordModel (imageName: "moon", word: "moon"),
+    WordModel (imageName: "plane", word: "plane"),
+    WordModel (imageName: "Rocket", word: "rocket"),
+    WordModel (imageName: "Sun", word: "sun"),
     
     // Second group
-    WordPuzzleModel(imageName: "Apple", word: "apple"),
-    WordPuzzleModel(imageName: "Bear", word: "bear"),
-    WordPuzzleModel(imageName: "Camel", word: "camel"),
-    WordPuzzleModel(imageName: "Corn", word: "corn"),
-    WordPuzzleModel(imageName: "Cucumber", word: "cucumber"),
-    WordPuzzleModel(imageName: "Door", word: "door"),
-    WordPuzzleModel(imageName: "Giraffe", word: "giraffe"),
-    WordPuzzleModel(imageName: "Horse", word: "horse"),
-    WordPuzzleModel(imageName: "Lion", word: "lion"),
-    WordPuzzleModel(imageName: "Pomegranate", word: "pomegranate"),
-    WordPuzzleModel(imageName: "Thobe", word: "thobe")
+    WordModel (imageName: "Apple", word: "apple"),
+    WordModel (imageName: "Bear", word: "bear"),
+    WordModel (imageName: "Camel", word: "camel"),
+    WordModel (imageName: "Corn", word: "corn"),
+    WordModel (imageName: "Cucumber", word: "cucumber"),
+    WordModel (imageName: "Door", word: "door"),
+    WordModel (imageName: "Giraffe", word: "giraffe"),
+    WordModel (imageName: "Horse", word: "horse"),
+    WordModel (imageName: "Lion", word: "lion"),
+    WordModel (imageName: "Pomegranate", word: "pomegranate"),
+    WordModel (imageName: "Thobe", word: "thobe")
 ]

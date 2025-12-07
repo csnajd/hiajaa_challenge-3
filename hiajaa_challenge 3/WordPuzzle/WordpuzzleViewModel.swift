@@ -2,11 +2,11 @@ import SwiftUI
 internal import Combine
 
 @MainActor
-class WordPuzzleViewModel: ObservableObject {
+class WordViewModel: ObservableObject {
     // MARK: - Published Properties
     @Published var selectedLetter: String = ""
     @Published var currentWord: String = ""
-    @Published var currentPuzzle: WordPuzzleModel?
+    @Published var currentPuzzle: WordModel?
     @Published var letters: [Letter] = []
     @Published var targetSlots: [Letter?] = []
     @Published var isCompleted: Bool = false
@@ -37,7 +37,7 @@ class WordPuzzleViewModel: ObservableObject {
     // MARK: - Public Methods
     
     /// Get words that start with a specific letter
-    func getWords(startingWith letter: String) -> [WordPuzzleModel] {
+    func getWords(startingWith letter: String) -> [WordModel] {
         return allWords.filter { $0.word.lowercased().hasPrefix(letter.lowercased()) }
     }
     
