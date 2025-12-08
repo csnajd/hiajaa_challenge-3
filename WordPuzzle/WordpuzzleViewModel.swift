@@ -2,6 +2,8 @@ import SwiftUI
 internal import Combine
 
 
+
+
 @MainActor
 class WordViewModel: ObservableObject {
     // MARK: - Published Properties
@@ -28,11 +30,13 @@ class WordViewModel: ObservableObject {
         Color(red: 0.9, green: 0.6, blue: 1.0)       // Light purple
     ]
     
-    // All available letters for navigation
-    private let allLetters = ["A", "B", "C", "D", "E", "F", "G", "H",
-                              "I", "J", "K", "L", "M", "N", "O", "P",
-                              "Q", "R", "S", "T", "U", "V", "W", "X",
-                              "Y", "Z"]
+    // All available Arabic letters for navigation
+    private let allLetters = [
+        "أ", "ب", "ت", "ث", "ج", "ح", "خ", "د",
+        "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط",
+        "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م",
+        "ن", "هـ", "و", "ي"
+    ]
     
     // MARK: - Initialization
     init() {}
@@ -44,14 +48,14 @@ class WordViewModel: ObservableObject {
     
     // MARK: - Public Methods
     
-    /// Get words that start with a specific letter
+    /// Get words that start with a specific Arabic letter
     func getWords(startingWith letter: String) -> [WordModel] {
-        return allWords.filter { $0.word.lowercased().hasPrefix(letter.lowercased()) }
+        return allWords.filter { $0.startLetter == letter }
     }
     
     /// Select a letter and load a random word starting with that letter
     func selectLetter(_ letter: String) {
-        selectedLetter = letter.uppercased()
+        selectedLetter = letter
         loadRandomWord(startingWith: selectedLetter)
     }
     
@@ -62,13 +66,13 @@ class WordViewModel: ObservableObject {
         guard let randomWord = words.randomElement() else {
             // Fallback if no words found - pick any random word
             currentPuzzle = allWords.randomElement()
-            currentWord = currentPuzzle?.word.lowercased() ?? "lion"
+            currentWord = currentPuzzle?.word ?? "أسد"
             setupPuzzle()
             return
         }
         
         currentPuzzle = randomWord
-        currentWord = randomWord.word.lowercased()
+        currentWord = randomWord.word
         setupPuzzle()
     }
     
@@ -78,11 +82,14 @@ class WordViewModel: ObservableObject {
         showSuccessAnimation = false
         showSuccessView = false
         
+        let wordLength = currentWord.count
+        
         // Create letter objects with colors
+        // For Arabic RTL: position 0 is rightmost (first letter), position n-1 is leftmost (last letter)
         letters = currentWord.enumerated().map { index, char in
             Letter(
-                character: String(char).uppercased(),
-                correctPosition: index,
+                character: String(char),
+                correctPosition: index,  // Keep original position (0 = first letter = rightmost in RTL display)
                 currentPosition: nil,
                 isPlaced: false,
                 color: letterColors[index % letterColors.count]
@@ -93,7 +100,7 @@ class WordViewModel: ObservableObject {
         letters.shuffle()
         
         // Initialize empty target slots
-        targetSlots = Array(repeating: nil, count: currentWord.count)
+        targetSlots = Array(repeating: nil, count: wordLength)
     }
     
     /// Handle letter drop in a target slot
@@ -182,8 +189,8 @@ class WordViewModel: ObservableObject {
     
     /// Move to next letter
     func nextLetter() {
-        guard let currentIndex = allLetters.firstIndex(of: selectedLetter.uppercased()) else {
-            selectLetter("A")
+        guard let currentIndex = allLetters.firstIndex(of: selectedLetter) else {
+            selectLetter("أ")
             return
         }
         
@@ -193,7 +200,7 @@ class WordViewModel: ObservableObject {
     
     /// Get current letter index
     func getCurrentLetterIndex() -> Int {
-        return allLetters.firstIndex(of: selectedLetter.uppercased()) ?? 0
+        return allLetters.firstIndex(of: selectedLetter) ?? 0
     }
     
     // MARK: - Helper Methods

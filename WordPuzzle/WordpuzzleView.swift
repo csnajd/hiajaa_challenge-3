@@ -1,14 +1,53 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import AVFoundation
+internal import Combine
+// MARK: - Word Audio Manager
+class WordAudioManager: ObservableObject {
+    private var audioPlayer: AVAudioPlayer?
+    
+    func playWordSound(soundName: String) {
+        // Try different extensions
+        let extensions = ["mp3", "wav", "m4a", "aac", "caf"]
+        var soundURL: URL?
+        
+        for ext in extensions {
+            if let url = Bundle.main.url(forResource: soundName, withExtension: ext) {
+                soundURL = url
+                break
+            }
+        }
+        
+        guard let url = soundURL else {
+            print("⚠️ Sound file '\(soundName)' not found")
+            return
+        }
+        
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+            
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+            audioPlayer?.play()
+        } catch {
+            print("❌ Failed to play sound: \(error.localizedDescription)")
+        }
+    }
+    
+    func stopSound() {
+        audioPlayer?.stop()
+    }
+}
 
 struct WordView: View {
     
     @StateObject private var viewModel: WordViewModel
+    @StateObject private var audioManager = WordAudioManager()
     @EnvironmentObject var navigationManager: NavigationManager
     
     let selectedLetter: String
     
-    init(selectedLetter: String = "A") {
+    init(selectedLetter: String = "أ") {
         self.selectedLetter = selectedLetter
         _viewModel = StateObject(wrappedValue: WordViewModel(selectedLetter: selectedLetter))
     }
@@ -25,12 +64,13 @@ struct WordView: View {
             Color.white.ignoresSafeArea()
             
             VStack {
-                // Back button top left
+                // Back button top right (RTL)
                 HStack {
+                    Spacer()
                     Button {
                         navigationManager.goBack()
                     } label: {
-                        Image(systemName: "chevron.backward")
+                        Image(systemName: "chevron.forward")
                             .font(.title3.bold())
                             .foregroundColor(.black)
                             .padding(10)
@@ -40,9 +80,8 @@ struct WordView: View {
                                     .shadow(radius: 4)
                             )
                     }
-                    Spacer()
                 }
-                .padding(.leading, 24)
+                .padding(.trailing, 24)
                 .padding(.top, 16)
                 
                 Spacer()
@@ -59,7 +98,10 @@ struct WordView: View {
                         HStack {
                             Spacer()
                             Button {
-                                // Play sound here
+                                // Play word sound
+                                if let puzzle = viewModel.currentPuzzle {
+                                    audioManager.playWordSound(soundName: puzzle.soundName)
+                                }
                             } label: {
                                 Image(systemName: "speaker.wave.2.fill")
                                     .font(.title2.bold())
@@ -83,9 +125,10 @@ struct WordView: View {
                                 .frame(height: 220)
                         }
                         
-                        // Letter slots (targetSlots)
+                        // Letter slots for Arabic RTL
+                        // Slots displayed right-to-left: rightmost = position 0 (first letter)
                         HStack(spacing: 18) {
-                            ForEach(0..<viewModel.currentWord.count, id: \.self) { index in
+                            ForEach(Array(0..<viewModel.currentWord.count).reversed(), id: \.self) { index in
                                 let letter = viewModel.getLetterAt(position: index)
                                 let borderColor = slotBorderColors[index % slotBorderColors.count]
                                 
@@ -98,6 +141,7 @@ struct WordView: View {
                                     }
                             }
                         }
+                        .environment(\.layoutDirection, .leftToRight) // Prevent double reversal
                         .padding(.bottom, 28)
                     }
                     .padding(.horizontal, 32)
@@ -120,6 +164,7 @@ struct WordView: View {
                             }
                     }
                 }
+                .environment(\.layoutDirection, .leftToRight) // Keep letters in shuffled order
                 .padding(.bottom, 60)
             }
         }
@@ -129,14 +174,14 @@ struct WordView: View {
         .animation(.easeInOut(duration: 0.25), value: viewModel.shakePage)
         .onAppear {
             if viewModel.currentPuzzle == nil {
-                viewModel.selectLetter(viewModel.selectedLetter.isEmpty ? "A" : viewModel.selectedLetter)
+                viewModel.selectLetter(viewModel.selectedLetter.isEmpty ? "أ" : viewModel.selectedLetter)
             }
         }
         .onChange(of: viewModel.showSuccessView) { _, newValue in
             if newValue {
                 let data = SuccessData(
-                    selectedAvatar: "avatar1",
-                    correctWord: viewModel.currentWord.uppercased(),
+                    selectedAvatar: navigationManager.selectedAvatar,
+                    correctWord: viewModel.currentWord,
                     imageName: viewModel.currentPuzzle?.imageName ?? "",
                     activityType: .words,
                     currentLetter: selectedLetter
@@ -250,7 +295,7 @@ struct PageShakeEffect: GeometryEffect {
 
 struct WordView_Previews: PreviewProvider {
     static var previews: some View {
-        WordView(selectedLetter: "A")
+        WordView(selectedLetter: "أ")
             .previewDevice("iPad (10th generation)")
     }
 }

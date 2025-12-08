@@ -10,12 +10,13 @@ import SwiftUI
 
 struct LetterSelectionModel {
     
+    // Arabic letters
     var letters: [String] {
         return [
-            "A", "B", "C", "D", "E", "F", "G", "H",
-            "I", "J", "K", "L", "M", "N", "O", "P",
-            "Q", "R", "S", "T", "U", "V", "W", "X",
-            "Y", "Z"
+            "أ", "ب", "ت", "ث", "ج", "ح", "خ", "د",
+            "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط",
+            "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م",
+            "ن", "هـ", "و", "ي"
         ]
     }
     
@@ -26,15 +27,15 @@ struct LetterSelectionModel {
     ]
     
     var swipeInstruction: String {
-        return "Swipe left or right to change letter"
+        return "اسحب لليسار أو اليمين لتغيير الحرف"
     }
     
     var listInstruction: String {
-        return "Choose a letter from the list"
+        return "اختر حرفاً من القائمة"
     }
     
     var confirmButtonText: String {
-        return "Confirm"
+        return "تأكيد"
     }
     
     init() {}

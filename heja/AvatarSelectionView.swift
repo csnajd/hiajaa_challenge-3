@@ -27,7 +27,7 @@ struct AvatarSelectionView: View {
             
             VStack(spacing: 0) {
 
-                Text("Choose your character")
+                Text("اختر شخصيتك")
                     .font(.system(size: 30, weight: .medium))
                     .foregroundColor(.black)
                     .padding(.top, 40)
@@ -66,11 +66,12 @@ struct AvatarSelectionView: View {
                 Spacer().frame(height: 95)
 
                 Button(action: {
-                    if selectedAvatar != nil {
+                    if let avatar = selectedAvatar {
+                        navigationManager.setAvatar(avatar.image)
                         navigationManager.path.append("home")
                     }
                 }) {
-                    Text("Confirm")
+                    Text("تأكيد")
                         .font(.system(size: 26, weight: .medium))
                         .foregroundColor(.black)
                         .frame(width: 344, height: 82)
@@ -84,6 +85,7 @@ struct AvatarSelectionView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(hex: "FEFEFE"))
+            .environment(\.layoutDirection, .rightToLeft)
 
             // Navigation destinations
             .navigationDestination(for: String.self) { destination in
@@ -105,13 +107,7 @@ struct AvatarSelectionView: View {
                     ColoringView(selectedLetter: letter)
                         .environmentObject(navigationManager)
                 case .successView(let data):
-                    SuccessView(
-                        selectedAvatar: data.selectedAvatar,
-                        correctWord: data.correctWord,
-                        imageName: data.imageName,
-                        activityType: data.activityType,
-                        currentLetter: data.currentLetter
-                    )
+                    SuccessView(data: data)
                     .environmentObject(navigationManager)
                 }
             }

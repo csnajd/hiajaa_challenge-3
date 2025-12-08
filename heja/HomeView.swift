@@ -7,7 +7,7 @@ struct HomeView: View {
 
     var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
-        return hour < 12 ? "Good Morning" : "Good Evening"
+        return hour < 12 ? "صباح الخير" : "مساء الخير"
     }
 
     var body: some View {
@@ -37,7 +37,7 @@ struct HomeView: View {
                     }
 
                     Text(greeting)
-                        .font(.custom("NotoSansArabic-Regular", size: 40))
+                        .font(.system(size: 40, weight: .medium))
                         .foregroundColor(Color(hex: "7B4D2C"))
                 }
             }
@@ -50,7 +50,7 @@ struct HomeView: View {
             HStack(spacing: 150) {
 
                 HomeButtonView(
-                    title: "Words",
+                    title: "الكلمات",
                     imageName: "wordsIcon",
                     color: "CBFABA"
                 ) {
@@ -58,7 +58,7 @@ struct HomeView: View {
                 }
 
                 HomeButtonView(
-                    title: "Coloring",
+                    title: "التلوين",
                     imageName: "coloringIcon",
                     color: "BAE9FA"
                 ) {
@@ -73,5 +73,6 @@ struct HomeView: View {
         .background(Color(hex: "FEFEFE"))
         .ignoresSafeArea()
         .navigationBarHidden(true)
+        .environment(\.layoutDirection, .rightToLeft)
     }
 }

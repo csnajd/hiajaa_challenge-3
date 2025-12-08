@@ -78,6 +78,11 @@
 			path = WordPuzzle;
 			sourceTree = "<group>";
 		};
+		0E87A3E62EE762D60098F483 /* Sounds */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Sounds;
+			sourceTree = "<group>";
+		};
 		2F38433F2EE4EB3700CAA2A4 /* Coloring */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -138,6 +143,7 @@
 		CDB6F3632EDC7F6500F0068D = {
 			isa = PBXGroup;
 			children = (
+				0E87A3E62EE762D60098F483 /* Sounds */,
 				0E5DE1E62EE5FE43000515DE /* WordPuzzle */,
 				0E5DE1E02EE5F60D000515DE /* Nvigation manger.swift */,
 				2F38433F2EE4EB3700CAA2A4 /* Coloring */,
@@ -178,6 +184,7 @@
 			fileSystemSynchronizedGroups = (
 				0E5A49A82EDF280700049ACA /* LetterSelection */,
 				0E5DE1E62EE5FE43000515DE /* WordPuzzle */,
+				0E87A3E62EE762D60098F483 /* Sounds */,
 				CDB6F36E2EDC7F6500F0068D /* hiajaa_challenge 3 */,
 				CDB6F4152EE5A76B00F0068D /* heja */,
 			);
@@ -202,6 +209,7 @@
 				CDB6F37B2EDC7F6600F0068D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				0E87A3E62EE762D60098F483 /* Sounds */,
 				CDB6F37C2EDC7F6600F0068D /* hiajaa_challenge 3Tests */,
 			);
 			name = "hiajaa_challenge 3Tests";
@@ -225,6 +233,7 @@
 				CDB6F3852EDC7F6600F0068D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				0E87A3E62EE762D60098F483 /* Sounds */,
 				CDB6F3862EDC7F6600F0068D /* hiajaa_challenge 3UITests */,
 			);
 			name = "hiajaa_challenge 3UITests";

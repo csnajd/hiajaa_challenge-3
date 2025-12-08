@@ -8,6 +8,7 @@
 import SwiftUI
 internal import Combine
 
+
 enum AppRoute: Hashable {
     case letterSelection(ActivityType)
     case wordView(String)
@@ -21,11 +22,32 @@ struct SuccessData: Hashable {
     let imageName: String
     let activityType: ActivityType
     let currentLetter: String
+    let drawingImageData: Data?  // For coloring activity - stores the drawing as PNG data
+    
+    init(selectedAvatar: String, correctWord: String, imageName: String, activityType: ActivityType, currentLetter: String, drawingImageData: Data? = nil) {
+        self.selectedAvatar = selectedAvatar
+        self.correctWord = correctWord
+        self.imageName = imageName
+        self.activityType = activityType
+        self.currentLetter = currentLetter
+        self.drawingImageData = drawingImageData
+    }
+    
+    // Convert Data to UIImage for display
+    var drawingImage: UIImage? {
+        guard let data = drawingImageData else { return nil }
+        return UIImage(data: data)
+    }
 }
 
 @MainActor
 class NavigationManager: ObservableObject {
     @Published var path = NavigationPath()
+    @Published var selectedAvatar: String = "avatar1"  // Store the selected avatar
+    
+    func setAvatar(_ avatar: String) {
+        selectedAvatar = avatar
+    }
     
     func navigateToLetterSelection(activityType: ActivityType) {
         path.append(AppRoute.letterSelection(activityType))
@@ -56,12 +78,14 @@ class NavigationManager: ObservableObject {
     }
     
     func goToNextLetter(currentLetter: String, activityType: ActivityType) {
-        let allLetters = ["A", "B", "C", "D", "E", "F", "G", "H",
-                          "I", "J", "K", "L", "M", "N", "O", "P",
-                          "Q", "R", "S", "T", "U", "V", "W", "X",
-                          "Y", "Z"]
+        let allLetters = [
+            "أ", "ب", "ت", "ث", "ج", "ح", "خ", "د",
+            "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط",
+            "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م",
+            "ن", "هـ", "و", "ي"
+        ]
         
-        guard let currentIndex = allLetters.firstIndex(of: currentLetter.uppercased()) else {
+        guard let currentIndex = allLetters.firstIndex(of: currentLetter) else {
             return
         }
         

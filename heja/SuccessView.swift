@@ -75,21 +75,38 @@ struct SuccessView: View {
     let imageName: String
     let activityType: ActivityType
     let currentLetter: String
+    let drawingImageData: Data?
     
     @EnvironmentObject var navigationManager: NavigationManager
     @State private var showAlert = false
     @State private var showConfetti = true
+    
+    // Convert Data to UIImage
+    var drawingImage: UIImage? {
+        guard let data = drawingImageData else { return nil }
+        return UIImage(data: data)
+    }
+    
+    // Custom initializer to work with SuccessData
+    init(data: SuccessData) {
+        self.selectedAvatar = data.selectedAvatar
+        self.correctWord = data.correctWord
+        self.imageName = data.imageName
+        self.activityType = data.activityType
+        self.currentLetter = data.currentLetter
+        self.drawingImageData = data.drawingImageData
+    }
 
     var body: some View {
         ZStack {
             VStack(spacing: 32) {
 
                 // Title
-                Text("Excellent!")
+                Text("ممتاز!")
                     .font(.system(size: 72, weight: .bold))
                     .foregroundColor(Color(hex: "CE845A"))
 
-                Text("Good job ⭐️")
+                Text("أحسنت ⭐️")
                     .font(.system(size: 26))
                     .foregroundColor(.black.opacity(0.75))
 
@@ -119,19 +136,6 @@ struct SuccessView: View {
                     // Word completion card
                     HStack(spacing: 22) {
 
-                        Image(imageName)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 110, height: 110)
-
-                        HStack(spacing: 18) {
-                            ForEach(Array(correctWord), id: \.self) { letter in
-                                Text(String(letter))
-                                    .font(.system(size: 52, weight: .medium))
-                                    .foregroundColor(.black)
-                            }
-                        }
-
                         // Checkmark button
                         Button {
                             showAlert = true
@@ -140,7 +144,17 @@ struct SuccessView: View {
                                 .font(.system(size: 55))
                                 .foregroundColor(Color(hex: "8BC34A"))
                         }
-                        .padding(.trailing, 5)
+                        .padding(.leading, 5)
+
+                        // Word displayed RTL
+                        Text(correctWord)
+                            .font(.system(size: 52, weight: .medium))
+                            .foregroundColor(.black)
+
+                        Image(imageName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 110, height: 110)
                     }
                     .frame(width: 730, height: 160)
                     .background(
@@ -149,12 +163,8 @@ struct SuccessView: View {
                             .shadow(color: .black.opacity(0.12), radius: 18, y: 8)
                     )
                 } else {
-                    // Coloring completion card
+                    // Coloring completion card - show the user's drawing
                     HStack(spacing: 30) {
-                        Text(correctWord)
-                            .font(.system(size: 120, weight: .bold))
-                            .foregroundColor(Color(hex: "7B4D2C"))
-                        
                         // Checkmark button
                         Button {
                             showAlert = true
@@ -163,8 +173,21 @@ struct SuccessView: View {
                                 .font(.system(size: 55))
                                 .foregroundColor(Color(hex: "8BC34A"))
                         }
+                        
+                        // Show the captured drawing or fallback to letter
+                        if let drawingImage = drawingImage {
+                            Image(uiImage: drawingImage)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 140, height: 140)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                        } else {
+                            Text(correctWord)
+                                .font(.system(size: 120, weight: .bold))
+                                .foregroundColor(Color(hex: "7B4D2C"))
+                        }
                     }
-                    .frame(width: 400, height: 160)
+                    .frame(width: 400, height: 180)
                     .background(
                         RoundedRectangle(cornerRadius: 28)
                             .fill(Color.white)
@@ -183,11 +206,12 @@ struct SuccessView: View {
         }
         .background(Color.white.ignoresSafeArea())
         .navigationBarHidden(true)
-        .alert("What would you like to do?", isPresented: $showAlert) {
-            Button("Next Letter") {
+        .environment(\.layoutDirection, .rightToLeft)
+        .alert("ماذا تريد أن تفعل؟", isPresented: $showAlert) {
+            Button("الحرف التالي") {
                 navigationManager.goToNextLetter(currentLetter: currentLetter, activityType: activityType)
             }
-            Button("Back Home", role: .destructive) {
+            Button("العودة للرئيسية", role: .destructive) {
                 navigationManager.goToHome()
             }
         }

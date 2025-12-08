@@ -25,18 +25,20 @@ struct LetterSelectionSingleView: View {
                 .gesture(
                     DragGesture(minimumDistance: 50)
                         .onEnded { value in
+                            // RTL: swipe directions reversed
                             if value.translation.width < 0 {
-                                viewModel.swipeLeft()
+                                viewModel.swipeRight() // Swipe left goes to next (right in RTL)
                             } else if value.translation.width > 0 {
-                                viewModel.swipeRight()
+                                viewModel.swipeLeft() // Swipe right goes to previous (left in RTL)
                             }
                         }
                 )
             
-            // Navigation Arrows - Outside the card
+            // Navigation Arrows - RTL order (right arrow first, then left)
             HStack(spacing: 100) {
-                Button(action: { viewModel.swipeLeft() }) {
-                    Image(systemName: "arrow.left.circle.fill")
+                // Right arrow (next letter in RTL)
+                Button(action: { viewModel.swipeRight() }) {
+                    Image(systemName: "arrow.right.circle.fill")
                         .font(.system(size: 60))
                         .foregroundStyle(
                             LinearGradient(
@@ -48,8 +50,9 @@ struct LetterSelectionSingleView: View {
                         .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
                 }
                 
-                Button(action: { viewModel.swipeRight() }) {
-                    Image(systemName: "arrow.right.circle.fill")
+                // Left arrow (previous letter in RTL)
+                Button(action: { viewModel.swipeLeft() }) {
+                    Image(systemName: "arrow.left.circle.fill")
                         .font(.system(size: 60))
                         .foregroundStyle(
                             LinearGradient(

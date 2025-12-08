@@ -13,12 +13,13 @@ struct LetterSelectionHeaderView: View {
     
     var body: some View {
         HStack {
-            Button(action: onClose) {
+            // List button on the left (RTL: appears on right side of screen)
+            Button(action: onToggleList) {
                 Circle()
-                    .fill(Color.red.opacity(0.3))
+                    .fill(Color.yellow.opacity(0.4))
                     .frame(width: 56, height: 56)
                     .overlay(
-                        Image(systemName: "xmark")
+                        Image(systemName: "list.bullet")
                             .font(.system(size: 24, weight: .bold))
                             .foregroundColor(.black)
                     )
@@ -27,12 +28,13 @@ struct LetterSelectionHeaderView: View {
             
             Spacer()
             
-            Button(action: onToggleList) {
+            // Close button on the right (RTL: appears on left side of screen)
+            Button(action: onClose) {
                 Circle()
-                    .fill(Color.yellow.opacity(0.4))
+                    .fill(Color.red.opacity(0.3))
                     .frame(width: 56, height: 56)
                     .overlay(
-                        Image(systemName: "list.bullet")
+                        Image(systemName: "xmark")
                             .font(.system(size: 24, weight: .bold))
                             .foregroundColor(.black)
                     )
