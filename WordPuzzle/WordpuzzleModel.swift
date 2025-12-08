@@ -46,7 +46,7 @@ let allWords: [WordModel] = [
     
     // ب - Ba
     WordModel(imageName: "Door", word: "باب", startLetter: "ب", soundName: "door"),
-    WordModel(imageName: "books", word: "كتب", startLetter: "ب", soundName: "books"),
+  
     
     // ت - Ta
     WordModel(imageName: "Apple", word: "تفاحة", startLetter: "ت", soundName: "apple"),
@@ -73,12 +73,12 @@ let allWords: [WordModel] = [
     WordModel(imageName: "Rocket", word: "صاروخ", startLetter: "ر", soundName: "rocket"),
     
     // ز - Zay
-    WordModel(imageName: "flower", word: "زهرة", startLetter: "ز", soundName: "flower"),
+   
     WordModel(imageName: "Giraffe", word: "زرافة", startLetter: "ز", soundName: "giraffe"),
     
     // س - Seen
     WordModel(imageName: "fish", word: "سمكة", startLetter: "س", soundName: "fish"),
-    WordModel(imageName: "cloud", word: "سحابة", startLetter: "س", soundName: "cloud"),
+   
     
     // ش - Sheen
     WordModel(imageName: "Sun", word: "شمس", startLetter: "ش", soundName: "sun"),
