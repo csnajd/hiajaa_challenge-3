@@ -44,7 +44,9 @@ class NavigationManager: ObservableObject {
     }
     
     func goToHome() {
+        // Remove all routes except "home"
         path = NavigationPath()
+        path.append("home")
     }
     
     func goBack() {
@@ -66,8 +68,9 @@ class NavigationManager: ObservableObject {
         let nextIndex = (currentIndex + 1) % allLetters.count
         let nextLetter = allLetters[nextIndex]
         
-        // Go back to letter selection level, then push new activity
+        // Go back to home, then push letter selection and activity
         path = NavigationPath()
+        path.append("home")
         path.append(AppRoute.letterSelection(activityType))
         
         if activityType == .words {

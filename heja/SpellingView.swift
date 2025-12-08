@@ -5,6 +5,7 @@ struct SpellingView: View {
 
     let model: WordModel
     @Binding var selectedAvatar: String
+    @EnvironmentObject var navigationManager: NavigationManager
 
     @State private var letters: [String] = []
     @State private var placed: [String?] = []
@@ -58,6 +59,7 @@ struct SpellingView: View {
 
             // Letter boxes
             HStack(spacing: 25) {
+
                 ForEach(0..<placed.count, id: \.self) { index in
                     ZStack {
                         RoundedRectangle(cornerRadius: 16)
@@ -94,25 +96,23 @@ struct SpellingView: View {
                     }
                 }
             }
-
-            // Navigation
-            .navigationDestination(isPresented: $goToSuccess) {
-                SuccessView(
+        }
+        .padding(.top, 40)
+        .onAppear { setupBoard() }
+        .onChange(of: goToSuccess) { _, newValue in
+            if newValue {
+                let firstLetter = String(model.word.prefix(1)).uppercased()
+                let data = SuccessData(
                     selectedAvatar: selectedAvatar,
                     correctWord: model.word,
                     imageName: model.imageName,
                     activityType: .words,
-                    currentLetter: "", // FIXED: Removed placeholder
-                    onNextLetter: {
-                        // Reset and continue
-                        goToSuccess = false
-                        setupBoard()
-                    }
+                    currentLetter: firstLetter
                 )
+                navigationManager.navigateToSuccess(data: data)
+                goToSuccess = false
             }
         }
-        .padding(.top, 40)
-        .onAppear { setupBoard() }
     }
 
     // --- Functions ---

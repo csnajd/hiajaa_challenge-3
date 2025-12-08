@@ -59,6 +59,7 @@ struct ConfettiView: View {
                 }
             }
             .onAppear {
+                // Create 50 confetti pieces
                 confettiPieces = Array(0..<50)
             }
         }
@@ -74,9 +75,6 @@ struct SuccessView: View {
     let imageName: String
     let activityType: ActivityType
     let currentLetter: String
-    
-    // 👇 ADDED: This allows parents (SpellingView/HomeView) to control what happens next
-    var onNextLetter: () -> Void
     
     @EnvironmentObject var navigationManager: NavigationManager
     @State private var showAlert = false
@@ -95,14 +93,18 @@ struct SuccessView: View {
                     .font(.system(size: 26))
                     .foregroundColor(.black.opacity(0.75))
 
+
                 // Background with avatar
                 ZStack {
+
+                    // Background image
                     Image("success_bg")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 750)
                         .offset(y: -20)
 
+                    // Avatar inside circle
                     Image(selectedAvatar)
                         .resizable()
                         .scaledToFit()
@@ -111,9 +113,12 @@ struct SuccessView: View {
                 }
                 .padding(.top, 10)
 
+
                 // Result card
                 if activityType == .words {
+                    // Word completion card
                     HStack(spacing: 22) {
+
                         Image(imageName)
                             .resizable()
                             .scaledToFit()
@@ -127,6 +132,7 @@ struct SuccessView: View {
                             }
                         }
 
+                        // Checkmark button
                         Button {
                             showAlert = true
                         } label: {
@@ -143,11 +149,13 @@ struct SuccessView: View {
                             .shadow(color: .black.opacity(0.12), radius: 18, y: 8)
                     )
                 } else {
+                    // Coloring completion card
                     HStack(spacing: 30) {
                         Text(correctWord)
                             .font(.system(size: 120, weight: .bold))
                             .foregroundColor(Color(hex: "7B4D2C"))
-                       
+                        
+                        // Checkmark button
                         Button {
                             showAlert = true
                         } label: {
@@ -167,7 +175,8 @@ struct SuccessView: View {
                 Spacer()
             }
             .padding(.top, 40)
-           
+            
+            // Confetti overlay
             if showConfetti {
                 ConfettiView()
             }
@@ -175,12 +184,9 @@ struct SuccessView: View {
         .background(Color.white.ignoresSafeArea())
         .navigationBarHidden(true)
         .alert("What would you like to do?", isPresented: $showAlert) {
-            
             Button("Next Letter") {
-                // 👇 UPDATED: Execute the closure passed from parent
-                onNextLetter()
+                navigationManager.goToNextLetter(currentLetter: currentLetter, activityType: activityType)
             }
-            
             Button("Back Home", role: .destructive) {
                 navigationManager.goToHome()
             }

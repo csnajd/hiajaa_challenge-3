@@ -20,10 +20,10 @@ let avatars: [Avatar] = [
 
 struct AvatarSelectionView: View {
     @State private var selectedAvatar: Avatar? = nil
-    @State private var goHome = false
+    @StateObject private var navigationManager = NavigationManager()
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationManager.path) {
             
             VStack(spacing: 0) {
 
@@ -67,7 +67,7 @@ struct AvatarSelectionView: View {
 
                 Button(action: {
                     if selectedAvatar != nil {
-                        goHome = true
+                        navigationManager.path.append("home")
                     }
                 }) {
                     Text("Confirm")
@@ -85,11 +85,34 @@ struct AvatarSelectionView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(hex: "FEFEFE"))
 
-            // Navigation to HomeView
-            .navigationDestination(isPresented: $goHome) {
-                if let selectedAvatar = selectedAvatar {
-                    HomeView(avatar: selectedAvatar)
+            // Navigation destinations
+            .navigationDestination(for: String.self) { destination in
+                if destination == "home", let avatar = selectedAvatar {
+                    HomeView(avatar: avatar)
                         .navigationBarBackButtonHidden(true)
+                        .environmentObject(navigationManager)
+                }
+            }
+            .navigationDestination(for: AppRoute.self) { route in
+                switch route {
+                case .letterSelection(let activityType):
+                    LetterSelectionView(activityType: activityType)
+                        .environmentObject(navigationManager)
+                case .wordView(let letter):
+                    WordView(selectedLetter: letter)
+                        .environmentObject(navigationManager)
+                case .coloringView(let letter):
+                    ColoringView(selectedLetter: letter)
+                        .environmentObject(navigationManager)
+                case .successView(let data):
+                    SuccessView(
+                        selectedAvatar: data.selectedAvatar,
+                        correctWord: data.correctWord,
+                        imageName: data.imageName,
+                        activityType: data.activityType,
+                        currentLetter: data.currentLetter
+                    )
+                    .environmentObject(navigationManager)
                 }
             }
         }

@@ -26,7 +26,7 @@ struct ColoringView: View {
                 .ignoresSafeArea()
             
             VStack {
-                backButton
+                headerButtons
                 
                 Spacer()
                 
@@ -53,8 +53,9 @@ struct ColoringView: View {
     
     // MARK: - View Components
     
-    private var backButton: some View {
+    private var headerButtons: some View {
         HStack {
+            // Back button
             Button(action: {
                 navigationManager.goBack()
             }) {
@@ -68,11 +69,27 @@ struct ColoringView: View {
                         .foregroundColor(.black)
                 }
             }
-            .padding(.leading, 30)
-            .padding(.top, 20)
             
             Spacer()
+            
+            // Done button
+            Button(action: {
+                viewModel.markAsComplete()
+            }) {
+                Text("Done")
+                    .font(.headline.bold())
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(
+                        Capsule()
+                            .fill(Color.green)
+                            .shadow(radius: 4)
+                    )
+            }
         }
+        .padding(.horizontal, 30)
+        .padding(.top, 20)
     }
     
     private var drawingCanvas: some View {
@@ -153,7 +170,7 @@ struct ColoringView: View {
             
             HStack(spacing: 35) {
                 ForEach(viewModel.availableColors, id: \.assetName) { colorPalette in
-                    ColorButton(
+                    ColoringColorButton(
                         color: Color(colorPalette.assetName),
                         isSelected: viewModel.isColorSelected(Color(colorPalette.assetName))
                     ) {
@@ -189,9 +206,9 @@ struct ColoringView: View {
     }
 }
 
-// MARK: - Color Button
+// MARK: - Coloring Color Button
 
-struct ColorButton: View {
+struct ColoringColorButton: View {
     let color: Color
     let isSelected: Bool
     let action: () -> Void
@@ -200,25 +217,12 @@ struct ColorButton: View {
         Button(action: action) {
             Circle()
                 .fill(color)
-                .frame(width: isSelected ? 55 : 45, height: isSelected ? 55 : 45)
+                .frame(width: DrawingConstants.colorCircleSize, height: DrawingConstants.colorCircleSize)
                 .overlay(
                     Circle()
                         .stroke(Color.white, lineWidth: isSelected ? 4 : 0)
                 )
-                .shadow(color: isSelected ? color.opacity(0.5) : .black.opacity(0.2),
-                        radius: isSelected ? 8 : 4,
-                        x: 0,
-                        y: isSelected ? 4 : 2)
+                .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 3)
         }
-        .animation(.spring(response: 0.3), value: isSelected)
-    }
-}
-
-// MARK: - Preview
-
-struct ColoringView_Previews: PreviewProvider {
-    static var previews: some View {
-        ColoringView(selectedLetter: "A")
-            .previewDevice("iPad (10th generation)")
     }
 }
