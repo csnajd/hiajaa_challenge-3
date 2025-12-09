@@ -8,7 +8,6 @@
 import SwiftUI
 internal import Combine
 
-
 enum AppRoute: Hashable {
     case letterSelection(ActivityType)
     case wordView(String)
@@ -85,17 +84,35 @@ class NavigationManager: ObservableObject {
             "ن", "هـ", "و", "ي"
         ]
         
-        guard let currentIndex = allLetters.firstIndex(of: currentLetter) else {
-            return
+        print("🔍 goToNextLetter called with: '\(currentLetter)', activityType: \(activityType)")
+        
+        // Find current letter index
+        var currentIndex = allLetters.firstIndex(of: currentLetter) ?? -1
+        
+        // If not found, try to find by comparing characters
+        if currentIndex == -1 {
+            for (index, letter) in allLetters.enumerated() {
+                if letter.contains(currentLetter) || currentLetter.contains(letter) {
+                    currentIndex = index
+                    break
+                }
+            }
+        }
+        
+        // Default to first letter if still not found
+        if currentIndex == -1 {
+            print("⚠️ Letter '\(currentLetter)' not found, starting from أ")
+            currentIndex = 0
         }
         
         let nextIndex = (currentIndex + 1) % allLetters.count
         let nextLetter = allLetters[nextIndex]
         
-        // Go back to home, then push letter selection and activity
+        print("✅ Moving from '\(currentLetter)' (index \(currentIndex)) to '\(nextLetter)' (index \(nextIndex))")
+        
+        // Clear navigation and rebuild path
         path = NavigationPath()
         path.append("home")
-        path.append(AppRoute.letterSelection(activityType))
         
         if activityType == .words {
             path.append(AppRoute.wordView(nextLetter))

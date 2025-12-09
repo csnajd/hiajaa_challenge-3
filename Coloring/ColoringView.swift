@@ -141,45 +141,30 @@ struct ColoringView: View {
     
     private var headerButtons: some View {
         HStack {
+            // Done button with checkmark
             Button(action: {
                 captureDrawing()
                 viewModel.markAsComplete()
             }) {
-                Text("تم")
-                    .font(.headline.bold())
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 12)
-                    .background(
-                        Capsule()
-                            .fill(Color.green)
-                            .shadow(radius: 4)
-                    )
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark")
+                        .font(.headline.bold())
+                    Text("تم")
+                        .font(.headline.bold())
+                }
+                .foregroundColor(.white)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 12)
+                .background(
+                    Capsule()
+                        .fill(Color.green)
+                        .shadow(radius: 4)
+                )
             }
             
             Spacer()
             
-            Button(action: {
-                withAnimation(.spring()) {
-                    currentScale = 1.0
-                    lastScale = 1.0
-                    offset = .zero
-                    lastOffset = .zero
-                }
-            }) {
-                ZStack {
-                    Circle()
-                        .fill(Color.blue.opacity(0.3))
-                        .frame(width: DrawingConstants.buttonSize, height: DrawingConstants.buttonSize)
-                    
-                    Image(systemName: "arrow.counterclockwise")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.black)
-                }
-            }
-            
-            Spacer().frame(width: 16)
-            
+            // Close button
             Button(action: {
                 navigationManager.goBack()
             }) {

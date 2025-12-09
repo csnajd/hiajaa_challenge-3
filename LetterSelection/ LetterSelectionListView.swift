@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LetterSelectionListView: View {
     @ObservedObject var viewModel: LetterSelectionViewModel
+    @StateObject private var audioManager = LetterAudioManager()
     
     let columns = Array(repeating: GridItem(.flexible(), spacing: 16), count: 4)
     
@@ -18,6 +19,8 @@ struct LetterSelectionListView: View {
                 ForEach(Array(viewModel.model.letters.enumerated()), id: \.offset) { index, letter in
                     Button(action: {
                         viewModel.selectLetter(letter, at: index)
+                        // Play letter sound when tapped
+                        audioManager.playLetterSound(for: letter)
                     }) {
                         RoundedRectangle(cornerRadius: 28)
                             .fill(gradientForLetter(at: index))

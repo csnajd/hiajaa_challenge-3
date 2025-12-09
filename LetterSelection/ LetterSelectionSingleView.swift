@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LetterSelectionSingleView: View {
     @ObservedObject var viewModel: LetterSelectionViewModel
+    @StateObject private var audioManager = LetterAudioManager()
     
     var body: some View {
         VStack(spacing: 30) {
@@ -76,6 +77,14 @@ struct LetterSelectionSingleView: View {
             }
         }
         .padding()
+        .onChange(of: viewModel.currentLetter) { _, newLetter in
+            // Play sound when letter changes (on scroll/swipe)
+            audioManager.playLetterSound(for: newLetter)
+        }
+        .onAppear {
+            // Play sound for initial letter
+            audioManager.playLetterSound(for: viewModel.currentLetter)
+        }
     }
     
     private func gradientForCurrentLetter() -> LinearGradient {

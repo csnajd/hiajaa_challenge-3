@@ -6,10 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		0E5DE1E12EE5F617000515DE /* Nvigation manger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5DE1E02EE5F60D000515DE /* Nvigation manger.swift */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXContainerItemProxy section */
 		CDB6F37A2EDC7F6600F0068D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -28,7 +24,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0E5DE1E02EE5F60D000515DE /* Nvigation manger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Nvigation manger.swift"; sourceTree = "<group>"; };
 		CDB6F36C2EDC7F6500F0068D /* hiajaa_challenge 3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "hiajaa_challenge 3.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDB6F3792EDC7F6600F0068D /* hiajaa_challenge 3Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "hiajaa_challenge 3Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDB6F3832EDC7F6600F0068D /* hiajaa_challenge 3UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "hiajaa_challenge 3UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -78,9 +73,14 @@
 			path = WordPuzzle;
 			sourceTree = "<group>";
 		};
-		0E87A3E62EE762D60098F483 /* Sounds */ = {
+		0E87A4192EE83B560098F483 /* Sounds 2 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Sounds;
+			path = "Sounds 2";
+			sourceTree = "<group>";
+		};
+		0E87A4432EE83C750098F483 /* Mangers */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Mangers;
 			sourceTree = "<group>";
 		};
 		2F38433F2EE4EB3700CAA2A4 /* Coloring */ = {
@@ -143,9 +143,9 @@
 		CDB6F3632EDC7F6500F0068D = {
 			isa = PBXGroup;
 			children = (
-				0E87A3E62EE762D60098F483 /* Sounds */,
+				0E87A4432EE83C750098F483 /* Mangers */,
+				0E87A4192EE83B560098F483 /* Sounds 2 */,
 				0E5DE1E62EE5FE43000515DE /* WordPuzzle */,
-				0E5DE1E02EE5F60D000515DE /* Nvigation manger.swift */,
 				2F38433F2EE4EB3700CAA2A4 /* Coloring */,
 				CDB6F36E2EDC7F6500F0068D /* hiajaa_challenge 3 */,
 				CDB6F37C2EDC7F6600F0068D /* hiajaa_challenge 3Tests */,
@@ -184,7 +184,8 @@
 			fileSystemSynchronizedGroups = (
 				0E5A49A82EDF280700049ACA /* LetterSelection */,
 				0E5DE1E62EE5FE43000515DE /* WordPuzzle */,
-				0E87A3E62EE762D60098F483 /* Sounds */,
+				0E87A4192EE83B560098F483 /* Sounds 2 */,
+				0E87A4432EE83C750098F483 /* Mangers */,
 				CDB6F36E2EDC7F6500F0068D /* hiajaa_challenge 3 */,
 				CDB6F4152EE5A76B00F0068D /* heja */,
 			);
@@ -209,7 +210,7 @@
 				CDB6F37B2EDC7F6600F0068D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				0E87A3E62EE762D60098F483 /* Sounds */,
+				0E87A4192EE83B560098F483 /* Sounds 2 */,
 				CDB6F37C2EDC7F6600F0068D /* hiajaa_challenge 3Tests */,
 			);
 			name = "hiajaa_challenge 3Tests";
@@ -233,7 +234,7 @@
 				CDB6F3852EDC7F6600F0068D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				0E87A3E62EE762D60098F483 /* Sounds */,
+				0E87A4192EE83B560098F483 /* Sounds 2 */,
 				CDB6F3862EDC7F6600F0068D /* hiajaa_challenge 3UITests */,
 			);
 			name = "hiajaa_challenge 3UITests";
@@ -316,7 +317,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0E5DE1E12EE5F617000515DE /* Nvigation manger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
