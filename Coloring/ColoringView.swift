@@ -9,8 +9,6 @@ import SwiftUI
 import AVFoundation
 internal import Combine
 
-
-
 struct ColoringView: View {
     // MARK: - Properties
     @EnvironmentObject var navigationManager: NavigationManager
@@ -72,11 +70,8 @@ struct ColoringView: View {
     // MARK: - Capture Drawing as Image
     @MainActor
     private func captureDrawing() {
-        // Get the actual canvas size - use a reasonable capture size
         let canvasSize = CGSize(width: 400, height: 500)
         
-        // Calculate scale factor to map drawing coordinates to capture size
-        // The drawing happens in the full screen canvas, so we need to scale appropriately
         let screenBounds = UIScreen.main.bounds
         let scaleX = canvasSize.width / screenBounds.width
         let scaleY = canvasSize.height / screenBounds.height
@@ -86,11 +81,9 @@ struct ColoringView: View {
         let image = renderer.image { context in
             let cgContext = context.cgContext
             
-            // White background
             UIColor.white.setFill()
             context.fill(CGRect(origin: .zero, size: canvasSize))
             
-            // Draw the letter outline in center
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.alignment = .center
             
@@ -112,11 +105,8 @@ struct ColoringView: View {
             )
             viewModel.selectedLetter.draw(in: textRect, withAttributes: attributes)
             
-            // Draw all the user's paths - scale them to fit the capture size
-            // The paths were drawn on the full screen, so we need to transform them
             cgContext.saveGState()
             
-            // Translate to center and scale
             let offsetX = canvasSize.width / 2 - (screenBounds.width * scale) / 2
             let offsetY = canvasSize.height / 2 - (screenBounds.height * scale) / 2
             cgContext.translateBy(x: offsetX, y: offsetY)
@@ -133,7 +123,7 @@ struct ColoringView: View {
                 }
                 
                 let lineWidth = drawingPath.isEraser ? DrawingConstants.eraserLineWidth : DrawingConstants.normalLineWidth
-                bezierPath.lineWidth = lineWidth / scale  // Adjust line width for scale
+                bezierPath.lineWidth = lineWidth / scale
                 bezierPath.lineCapStyle = .round
                 bezierPath.lineJoinStyle = .round
                 
@@ -151,9 +141,7 @@ struct ColoringView: View {
     
     private var headerButtons: some View {
         HStack {
-            // Done button on the left
             Button(action: {
-                // Capture the drawing first, then mark complete
                 captureDrawing()
                 viewModel.markAsComplete()
             }) {
@@ -171,7 +159,6 @@ struct ColoringView: View {
             
             Spacer()
             
-            // Reset zoom button
             Button(action: {
                 withAnimation(.spring()) {
                     currentScale = 1.0
@@ -193,7 +180,6 @@ struct ColoringView: View {
             
             Spacer().frame(width: 16)
             
-            // Back button on the right
             Button(action: {
                 navigationManager.goBack()
             }) {
@@ -217,7 +203,7 @@ struct ColoringView: View {
             ZStack {
                 Color.white
                 
-                // Letter with only black stroke outline (no fill) - using UIKit approach
+                // Letter with black stroke outline
                 StrokedText(text: viewModel.selectedLetter, fontSize: 350, strokeWidth: 2, strokeColor: .black.opacity(0.6))
                 
                 Canvas { context, size in
@@ -275,7 +261,7 @@ struct ColoringView: View {
             .simultaneousGesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in
-                        viewModel.addPoint(value.location)
+                        viewModel.addPoint(value.location, canvasSize: geometry.size)
                         audioManager.startDrawingSound()
                     }
                     .onEnded { _ in
@@ -283,6 +269,9 @@ struct ColoringView: View {
                         audioManager.stopDrawingSound()
                     }
             )
+            .onAppear {
+                viewModel.generateLetterOutlinePath(canvasSize: geometry.size)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipped()
@@ -348,10 +337,8 @@ class DrawingAudioManager: ObservableObject {
     @Published private var isCurrentlyPlaying = false
     
     func startDrawingSound() {
-        // Only start if not already playing
         guard !isCurrentlyPlaying else { return }
         
-        // Setup audio player if needed
         if audioPlayer == nil {
             setupAudioPlayer()
         }
@@ -367,11 +354,9 @@ class DrawingAudioManager: ObservableObject {
     }
     
     private func setupAudioPlayer() {
-        // Try different extensions
         let extensions = ["mp3", "wav", "m4a", "aac", "caf", "aiff", "mp4", ""]
         var soundURL: URL?
         
-        // Debug: Print all audio files in bundle
         if let resourcePath = Bundle.main.resourcePath {
             do {
                 let files = try FileManager.default.contentsOfDirectory(atPath: resourcePath)
@@ -396,13 +381,11 @@ class DrawingAudioManager: ObservableObject {
         }
         
         do {
-            // Configure audio session
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
             try AVAudioSession.sharedInstance().setActive(true)
             
-            // Create player
             audioPlayer = try AVAudioPlayer(contentsOf: url)
-            audioPlayer?.numberOfLoops = -1  // Loop forever while drawing
+            audioPlayer?.numberOfLoops = -1
             audioPlayer?.volume = 1.0
             audioPlayer?.prepareToPlay()
             
@@ -413,7 +396,7 @@ class DrawingAudioManager: ObservableObject {
     }
 }
 
-// MARK: - Stroked Text View (UIKit-based for proper outline)
+// MARK: - Stroked Text View
 
 struct StrokedText: UIViewRepresentable {
     let text: String
@@ -431,7 +414,7 @@ struct StrokedText: UIViewRepresentable {
     func updateUIView(_ uiView: UILabel, context: Context) {
         let attributes: [NSAttributedString.Key: Any] = [
             .strokeColor: UIColor(strokeColor),
-            .strokeWidth: strokeWidth,  // Positive value = stroke only, no fill
+            .strokeWidth: strokeWidth,
             .font: UIFont.systemFont(ofSize: fontSize, weight: .regular),
             .foregroundColor: UIColor.clear
         ]
