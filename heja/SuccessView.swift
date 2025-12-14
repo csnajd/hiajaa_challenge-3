@@ -59,13 +59,13 @@ struct ConfettiView: View {
                 }
             }
             .onAppear {
-                // Create 50 confetti pieces
                 confettiPieces = Array(0..<50)
             }
         }
         .allowsHitTesting(false)
     }
 }
+
 
 // MARK: - Success View
 struct SuccessView: View {
@@ -78,16 +78,13 @@ struct SuccessView: View {
     let drawingImageData: Data?
     
     @EnvironmentObject var navigationManager: NavigationManager
-    @State private var showAlert = false
     @State private var showConfetti = true
     
-    // Convert Data to UIImage
     var drawingImage: UIImage? {
         guard let data = drawingImageData else { return nil }
         return UIImage(data: data)
     }
     
-    // Custom initializer to work with SuccessData
     init(data: SuccessData) {
         self.selectedAvatar = data.selectedAvatar
         self.correctWord = data.correctWord
@@ -97,11 +94,59 @@ struct SuccessView: View {
         self.drawingImageData = data.drawingImageData
     }
 
+    // MARK: - BODY
     var body: some View {
-        ZStack {
+        
+            ZStack(alignment: .topTrailing) {
+                
+                // أهم سطر يخلي الأزرار يروحون يمين فوق
+                Color.clear.ignoresSafeArea()
+                
+                // --------------------------
+                // 🔥 أزرار فوق يمين
+                // --------------------------
+                HStack(spacing: 12) {
+                    
+                    // Continue Button
+                    Button {
+                        navigationManager.goToNextLetter(
+                            currentLetter: currentLetter,
+                            activityType: activityType
+                        )
+                    } label: {
+                        Image(systemName: "arrow.right.circle.fill")
+                            .font(.system(size: 30))
+                            .foregroundColor(.white)
+                            .padding(14)
+                            .background(Color(hex: "7DBA7F"))
+                            .cornerRadius(22)
+                            .shadow(radius: 3)
+                    }
+                    
+                    // Home Button
+                    Button {
+                        navigationManager.goToHome()
+                    } label: {
+                        Image(systemName: "house.fill")
+                            .font(.system(size: 26))
+                            .foregroundColor(.white)
+                            .padding(14)
+                            .background(Color(hex: "FFB987"))
+                            .cornerRadius(22)
+                            .shadow(radius: 3)
+                    }
+                }
+                .padding(.top, 35)
+                .padding(.trailing, 35)
+                
+            
+            
+            
+            // --------------------------
+            // المحتوى الأساسي
+            // --------------------------
             VStack(spacing: 32) {
-
-                // Title
+                
                 Text("ممتاز!")
                     .font(.system(size: 72, weight: .bold))
                     .foregroundColor(Color(hex: "CE845A"))
@@ -109,19 +154,15 @@ struct SuccessView: View {
                 Text("أحسنت ⭐️")
                     .font(.system(size: 26))
                     .foregroundColor(.black.opacity(0.75))
-
-
-                // Background with avatar
+                
+                // Avatar + BG
                 ZStack {
-
-                    // Background image
                     Image("success_bg")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 750)
                         .offset(y: -20)
-
-                    // Avatar inside circle
+                    
                     Image(selectedAvatar)
                         .resizable()
                         .scaledToFit()
@@ -129,28 +170,19 @@ struct SuccessView: View {
                         .offset(y: -90)
                 }
                 .padding(.top, 10)
-
-
-                // Result card
+                
+                // --------------------------
+       
                 if activityType == .words {
-                    // Word completion card
                     HStack(spacing: 22) {
-
-                        // Checkmark button
-                        Button {
-                            showAlert = true
-                        } label: {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 55))
-                                .foregroundColor(Color(hex: "8BC34A"))
-                        }
-                        .padding(.leading, 5)
-
-                        // Word displayed RTL
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 55))
+                            .foregroundColor(Color(hex: "8BC34A"))
+                        
                         Text(correctWord)
                             .font(.system(size: 52, weight: .medium))
                             .foregroundColor(.black)
-
+                        
                         Image(imageName)
                             .resizable()
                             .scaledToFit()
@@ -160,23 +192,17 @@ struct SuccessView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 28)
                             .fill(Color.white)
-                            .shadow(color: .black.opacity(0.12), radius: 18, y: 8)
+                            .shadow(color: .black.opacity(0.12),
+                                    radius: 18, y: 8)
                     )
                 } else {
-                    // Coloring completion card - show the user's drawing
                     HStack(spacing: 30) {
-                        // Checkmark button
-                        Button {
-                            showAlert = true
-                        } label: {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 55))
-                                .foregroundColor(Color(hex: "8BC34A"))
-                        }
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 55))
+                            .foregroundColor(Color(hex: "8BC34A"))
                         
-                        // Show the captured drawing or fallback to letter
-                        if let drawingImage = drawingImage {
-                            Image(uiImage: drawingImage)
+                        if let img = drawingImage {
+                            Image(uiImage: img)
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 140, height: 140)
@@ -191,15 +217,16 @@ struct SuccessView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 28)
                             .fill(Color.white)
-                            .shadow(color: .black.opacity(0.12), radius: 18, y: 8)
+                            .shadow(color: .black.opacity(0.12),
+                                    radius: 18, y: 8)
                     )
                 }
-
+                
                 Spacer()
             }
-            .padding(.top, 40)
+            .padding(.top, 120)  // عشان ما يصدم بالأزرار
             
-            // Confetti overlay
+            // Confetti Layer
             if showConfetti {
                 ConfettiView()
             }
@@ -207,13 +234,5 @@ struct SuccessView: View {
         .background(Color.white.ignoresSafeArea())
         .navigationBarHidden(true)
         .environment(\.layoutDirection, .rightToLeft)
-        .alert("ماذا تريد أن تفعل؟", isPresented: $showAlert) {
-            Button("الحرف التالي") {
-                navigationManager.goToNextLetter(currentLetter: currentLetter, activityType: activityType)
-            }
-            Button("العودة للرئيسية", role: .destructive) {
-                navigationManager.goToHome()
-            }
-        }
     }
 }

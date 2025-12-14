@@ -97,18 +97,26 @@ struct AvatarSelectionView: View {
             }
             .navigationDestination(for: AppRoute.self) { route in
                 switch route {
+
+                case .avatarSelection:
+                    AvatarSelectionView()
+                        .environmentObject(navigationManager)
+
                 case .letterSelection(let activityType):
                     LetterSelectionView(activityType: activityType)
                         .environmentObject(navigationManager)
+
                 case .wordView(let letter):
                     WordView(selectedLetter: letter)
                         .environmentObject(navigationManager)
+
                 case .coloringView(let letter):
                     ColoringView(selectedLetter: letter)
                         .environmentObject(navigationManager)
+
                 case .successView(let data):
                     SuccessView(data: data)
-                    .environmentObject(navigationManager)
+                        .environmentObject(navigationManager)
                 }
             }
         }

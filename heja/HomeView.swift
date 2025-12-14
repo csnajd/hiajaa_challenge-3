@@ -11,63 +11,77 @@ struct HomeView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
+        ZStack(alignment: .topLeading) {
 
             //------------------
-            // HEADER
+            // المحتوى الأساسي
             //------------------
-            ZStack {
-                Color(hex: "FFEDA4")
-                    .frame(width: 850, height: 498)
-                    .shadow(color: Color.black.opacity(0.10), radius: 18)
-                    .ignoresSafeArea()
+            VStack(spacing: 0) {
 
-                VStack(spacing: 12) {
+                // HEADER
+                ZStack {
+                    Color(hex: "FFEDA4")
+                        .frame(width: 850, height: 498)
+                        .shadow(color: Color.black.opacity(0.10), radius: 18)
+                        .ignoresSafeArea()
 
-                    ZStack {
-                        Circle()
-                            .fill(Color(hex: "FFB987"))
-                            .frame(width: 199, height: 193)
-                            .shadow(color: Color.black.opacity(0.15), radius: 10)
+                    VStack(spacing: 12) {
+                        ZStack {
+                            Circle()
+                                .fill(Color(hex: "FFB987"))
+                                .frame(width: 199, height: 193)
+                                .shadow(color: Color.black.opacity(0.15), radius: 10)
 
-                        Image(avatar.image)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 226, height: 226)
+                            Image(avatar.image)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 226, height: 226)
+                        }
+
+                        Text(greeting)
+                            .font(.system(size: 40, weight: .medium))
+                            .foregroundColor(Color(hex: "7B4D2C"))
+                    }
+                }
+
+                Spacer().frame(height: 40)
+
+                // BUTTONS
+                HStack(spacing: 150) {
+
+                    HomeButtonView(
+                        title: "",
+                        imageName: "wordsIcon",
+                        color: "CBFABA"
+                    ) {
+                        navigationManager.navigateToLetterSelection(activityType: .words)
                     }
 
-                    Text(greeting)
-                        .font(.system(size: 40, weight: .medium))
-                        .foregroundColor(Color(hex: "7B4D2C"))
+                    HomeButtonView(
+                        title: "",
+                        imageName: "coloringIcon",
+                        color: "BAE9FA"
+                    ) {
+                        navigationManager.navigateToLetterSelection(activityType: .coloring)
+                    }
                 }
+                .padding(.top, 100)
+
+                Spacer()
             }
 
-            Spacer().frame(height: 40)
-
             //------------------
-            // BUTTONS
+            // زر الرجوع لاختيار الصورة
             //------------------
-            HStack(spacing: 150) {
-
-                HomeButtonView(
-                    title: "الكلمات",
-                    imageName: "wordsIcon",
-                    color: "CBFABA"
-                ) {
-                    navigationManager.navigateToLetterSelection(activityType: .words)
-                }
-
-                HomeButtonView(
-                    title: "التلوين",
-                    imageName: "coloringIcon",
-                    color: "BAE9FA"
-                ) {
-                    navigationManager.navigateToLetterSelection(activityType: .coloring)
-                }
+            Button {
+                navigationManager.goToAvatarSelection()
+            } label: {
+                Image(systemName: "arrow.backward.circle.fill")
+                    .font(.system(size: 38))
+                    .foregroundColor(Color(hex: "7B4D2C"))
+                    .padding(.top, 40)
+                    .padding(.leading, 40)
             }
-            .padding(.top, 100)
-
-            Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(hex: "FEFEFE"))

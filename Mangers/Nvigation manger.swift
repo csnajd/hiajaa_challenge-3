@@ -4,24 +4,27 @@
 //
 //  Created by Danyah ALbarqawi on 07/12/2025.
 //
-
 import SwiftUI
 internal import Combine
 
+// MARK: - Routes
 enum AppRoute: Hashable {
+    case avatarSelection            // ← أضفناه هنا
     case letterSelection(ActivityType)
     case wordView(String)
     case coloringView(String)
     case successView(SuccessData)
 }
 
+
+// MARK: - Success Data
 struct SuccessData: Hashable {
     let selectedAvatar: String
     let correctWord: String
     let imageName: String
     let activityType: ActivityType
     let currentLetter: String
-    let drawingImageData: Data?  // For coloring activity - stores the drawing as PNG data
+    let drawingImageData: Data?
     
     init(selectedAvatar: String, correctWord: String, imageName: String, activityType: ActivityType, currentLetter: String, drawingImageData: Data? = nil) {
         self.selectedAvatar = selectedAvatar
@@ -32,22 +35,32 @@ struct SuccessData: Hashable {
         self.drawingImageData = drawingImageData
     }
     
-    // Convert Data to UIImage for display
     var drawingImage: UIImage? {
         guard let data = drawingImageData else { return nil }
         return UIImage(data: data)
     }
 }
 
+
+// MARK: - Navigation Manager
 @MainActor
 class NavigationManager: ObservableObject {
+
     @Published var path = NavigationPath()
-    @Published var selectedAvatar: String = "avatar1"  // Store the selected avatar
+    @Published var selectedAvatar: String = "avatar1"
+
     
+    // --------- Avatar ---------
     func setAvatar(_ avatar: String) {
         selectedAvatar = avatar
     }
     
+    func goToAvatarSelection() {
+        path.append(AppRoute.avatarSelection)
+    }
+    
+    
+    // --------- Navigation Routes ---------
     func navigateToLetterSelection(activityType: ActivityType) {
         path.append(AppRoute.letterSelection(activityType))
     }
@@ -64,19 +77,25 @@ class NavigationManager: ObservableObject {
         path.append(AppRoute.successView(data))
     }
     
+    
+    // --------- Go Home ---------
     func goToHome() {
-        // Remove all routes except "home"
+        /// يرجع لأول صفحة (HomeView)
         path = NavigationPath()
-        path.append("home")
     }
     
+    
+    // --------- Back ---------
     func goBack() {
         if !path.isEmpty {
             path.removeLast()
         }
     }
     
+    
+    // --------- Next Letter ---------
     func goToNextLetter(currentLetter: String, activityType: ActivityType) {
+        
         let allLetters = [
             "أ", "ب", "ت", "ث", "ج", "ح", "خ", "د",
             "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط",
@@ -84,12 +103,8 @@ class NavigationManager: ObservableObject {
             "ن", "هـ", "و", "ي"
         ]
         
-        print("🔍 goToNextLetter called with: '\(currentLetter)', activityType: \(activityType)")
-        
-        // Find current letter index
         var currentIndex = allLetters.firstIndex(of: currentLetter) ?? -1
         
-        // If not found, try to find by comparing characters
         if currentIndex == -1 {
             for (index, letter) in allLetters.enumerated() {
                 if letter.contains(currentLetter) || currentLetter.contains(letter) {
@@ -99,20 +114,15 @@ class NavigationManager: ObservableObject {
             }
         }
         
-        // Default to first letter if still not found
         if currentIndex == -1 {
-            print("⚠️ Letter '\(currentLetter)' not found, starting from أ")
             currentIndex = 0
         }
         
         let nextIndex = (currentIndex + 1) % allLetters.count
         let nextLetter = allLetters[nextIndex]
         
-        print("✅ Moving from '\(currentLetter)' (index \(currentIndex)) to '\(nextLetter)' (index \(nextIndex))")
-        
-        // Clear navigation and rebuild path
+        // Reset + Home
         path = NavigationPath()
-        path.append("home")
         
         if activityType == .words {
             path.append(AppRoute.wordView(nextLetter))
